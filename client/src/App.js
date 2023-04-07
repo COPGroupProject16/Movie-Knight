@@ -9,9 +9,12 @@ function App() {
         <p>
           Edit <code>src/App.js</code> and save to reload.
         </p>
+        <p>
+          <code>Test Message 123 Applesauce</code>.
+        </p>
         <a
           className="App-link"
-          href="https://reactjs.org"
+          href="https://www.contactmanager2023.online"
           target="_blank"
           rel="noopener noreferrer"
         >
