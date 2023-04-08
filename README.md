@@ -12,6 +12,10 @@ A Movie List and Review Webapp using a MERN Stack. Large Project for COP 4331 Sp
   - Perform all terminal commands at "/home/Movie-Knight/client"
   - To run a DEVELOPMENT server, run "npm start", this creates a test server at "{IP address}:3000" <-- (Enter this into a web browser)
   - To build a public build of the app, run "npm run build", the results will be located inside "build" and will display on the live version of the site
+
+# Editing the Front-end
+  - Pushing Code from the Repo to the MERN Stack, only copy/paste the 'src', 'public', 'build' folders
+  - Install any new node modules from the terminal (NOT copy/paste)
   
 # Other Useful Commands
    - "reboot" -- reboots the MERN droplet
