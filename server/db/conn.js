@@ -16,7 +16,7 @@ module.exports = {
       console.error(e);
     }
 
-    _db = client.db("employees");
+    _db = client.db("movieknightdb");
 
     return (_db === undefined ? false : true);
   },
