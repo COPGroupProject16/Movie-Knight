@@ -1,26 +1,29 @@
-import logo from './logo.svg';
+import HomeBar from './components/navbar';  
+import HomeCard from './components/homecard';  
 import './App.css';
+// import Main from './components/main';
+// import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+// import {Link} from "react-router-dom";
 
+// This is the Homepage of the Web Site
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <p>
-          <code>Test Message 123 Applesauce</code>.
-        </p>
-        <a
-          className="App-link"
-          href="https://www.contactmanager2023.online"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      
+      <HomeBar/>
+      <HomeCard/>
+
+      {/* <Link to="/components/main">About</Link> */}
+
+      {/* <Router>
+        <Routes>
+          <Route exact path="/" element={<Main />} />
+
+          <Route path="/about" element={<Main />} />
+        </Routes>
+      </Router> */}
+   
+      
     </div>
   );
 }
