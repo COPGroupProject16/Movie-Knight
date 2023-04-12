@@ -1,5 +1,4 @@
 import React from 'react';
-import { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
 
 import Form from "react-bootstrap/Form";
@@ -7,42 +6,121 @@ import Button from 'react-bootstrap/Button';
 
 function LoginForm() {
 	
-	const [password, setPasswordValue] = React.useState("password");
+	// These are "Variables" (I think)
+
+	// "React.useState is the deafault state of the variable on load, ie. the state of the password type is "password" AKA its hidden
+	const [passwordType, setPasswordType] = React.useState("password"); // Password Type (text == visible, password == hidden)
 	const [passwordInput, setPasswordInput] = React.useState("");
+	const [username, setUsername] = React.useState("");
+
+	// This function is called when the user hits the submit button
+	const handleSubmit = (e) =>  {
+		
+		// DEBUG: 
+		e.preventDefault(); // prevents page from relaoding
+		//alert("Username: " + username  + "	Password: " + passwordInput); // displays stored values
+		console.log("Username: " + username);
+		console.log("Password: " + passwordInput);
+
+		//  JSON to be passed to Express Server
+		const jsonData =
+		{
+			username: username,
+			password: passwordInput,   
+		};
+
+		// Runs /login route in the Express Server
+		fetch("http://192.241.132.66:5000/record/login", 
+		{
+		  method: "POST",
+		  headers: {
+			"Content-Type": "application/json",
+		  },
+		  body: JSON.stringify(jsonData)
+		})
+
+		.then(response => response.json())
+		.then(data => 
+		{
+		  // Grab the Result
+		  console.log(data); // logs the JSON data received from the Express server
+		})
+		.catch(error =>  {
+		  window.alert("Login Failed: Try Again Later");
+		  return;
+		});
+
+
+		//alert("Account Found, Login Success!")
+	  
+
+
+		// CALL LOGIN API CALL HERE?
+
+		// IF SUCESSFULL, GO TO LOGGED IN PAGE
+
+		// IF NOT, ALERT THE USER
+	}	
+
+	// Updates Password when it has been changed
 	const onPasswordChange = (e) => {
 	  setPasswordInput(e.target.value);
 	};
+
+	
+	// Updates Username when it has been changed
+	const onUsernameChange = (e) => {
+		setUsername(e.target.value);
+	  };
+
+
+	// This function does the toggle password visibility
 	const toggle = () => {
-	  if (password === "password") {
-		setPasswordValue("text");
+	  if (passwordType === "password") {
+		setPasswordType("text");
 		return;
 	  }
-	  setPasswordValue("password");
+	  setPasswordType("password");
 	};
 	
+
+	// This is the HTML code that is return when called by another files
 	return (
 
-		<Form>
+		// The Login Form
+		<Form onSubmit = {handleSubmit}>
 
+			{/* Username Part */}
 			<Form.Group className="mb-3" controlId="formBasicUsername" name ="formBasicUsername">
 				<Form.Label>Username</Form.Label>
-				<Form.Control type="username" placeholder="Username" />
+
+				<Form.Control 
+				type="username" 
+				placeholder="Username"
+				value = {username}
+				onChange = {onUsernameChange} />
+
 			</Form.Group>
 
+			{/* The Password Part */}
 			<Form.Group className="mb-3" controlId="formBasicPassword" name ="formBasicPassword">
 				<Form.Label>Password</Form.Label>
 
 				<div className="input-group">
+					
+					{/* Password Input Field */}
 					<input
-					type={password}
+					type={passwordType}
 					onChange={onPasswordChange}
 					value={passwordInput}
 					placeholder="Password"
 					name="password"
 					className="form-control"
 					/>
+
+					{/* Toggle Password Visibility Button */}
 					<button className="btn btn-primary" type = "button" onClick={toggle}>
-					{password === "password" ? (
+					{passwordType === "password" ? (
 						<svg
 						width="20"
 						height="17"
@@ -66,9 +144,11 @@ function LoginForm() {
 						</svg>
 					)}
 					</button>
+
 				</div>
 			</Form.Group>
 
+			{/* The Login Button */}
 			<Button variant="primary" type="submit">
 				Login
 			</Button>

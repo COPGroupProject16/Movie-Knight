@@ -8,8 +8,10 @@ import './App.css';
 // This is the Homepage of the Web Site
 function App() {
   return (
+
     <div className="App">
       
+      {/* <p>Hello Test</p> */}
       <HomeBar/>
       <HomeCard/>
 

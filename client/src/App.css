@@ -1,17 +1,18 @@
 .App {
   text-align: center;
+  background: radial-gradient(circle at 24.1% 68.8%, rgb(50, 50, 50, 0.6) 0%, rgb(0, 0, 0, 0.6) 99.4%), url("loginbg.png");
 }
 
-.App-logo {
+/* .App-logo {
   height: 40vmin;
   pointer-events: none;
-}
+} */
 
-@media (prefers-reduced-motion: no-preference) {
+/* @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 5s linear;
   }
-}
+} */
 
 .App-header {
   background-color: #201e1e;
