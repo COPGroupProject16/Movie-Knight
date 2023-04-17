@@ -1,8 +1,13 @@
 import React from 'react';
-import 'bootstrap/dist/css/bootstrap.css';
 
+// Import Bootstrap
 import Form from "react-bootstrap/Form";
 import Button from 'react-bootstrap/Button';
+import 'bootstrap/dist/css/bootstrap.css';
+
+// Import Toasts
+import { toast, ToastContainer } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 
 function LoginForm() {
 	
@@ -10,23 +15,38 @@ function LoginForm() {
 
 	// "React.useState is the deafault state of the variable on load, ie. the state of the password type is "password" AKA its hidden
 	const [passwordType, setPasswordType] = React.useState("password"); // Password Type (text == visible, password == hidden)
-	const [passwordInput, setPasswordInput] = React.useState("");
+	const [password, setPassword] = React.useState("");
 	const [username, setUsername] = React.useState("");
+
+	const notifyFail = () => {
+		toast.error("Invalid Username/Password Combination", {
+			position: toast.POSITION.TOP_CENTER
+		});
+	};
+
+	const notifySuccess = () => {
+		toast.success("Login Successful!", {
+			position: toast.POSITION.TOP_CENTER
+		});
+	};
 
 	// This function is called when the user hits the submit button
 	const handleSubmit = (e) =>  {
 		
+		// Removes Any Exisitng Toast
+		toast.dismiss();
+
 		// DEBUG: 
 		e.preventDefault(); // prevents page from relaoding
-		//alert("Username: " + username  + "	Password: " + passwordInput); // displays stored values
+		//alert("Username: " + username  + "	Password: " + password); // displays stored values
 		console.log("Username: " + username);
-		console.log("Password: " + passwordInput);
+		console.log("Password: " + password);
 
 		//  JSON to be passed to Express Server
 		const jsonData =
 		{
 			username: username,
-			password: passwordInput,   
+			password: password,   
 		};
 
 		// Runs /login route in the Express Server
@@ -38,41 +58,41 @@ function LoginForm() {
 		  },
 		  body: JSON.stringify(jsonData)
 		})
-
 		.then(response => response.json())
 		.then(data => 
 		{
 		  // Grab the Result
 		  console.log(data); // logs the JSON data received from the Express server
+		  var res = JSON.parse(JSON.stringify(data)).exists;
+
+		  // Login Sucessfully
+		  if(res == "True")
+		  {
+			//alert("Login Success");
+			notifySuccess();
+			
+			// Send the user to the logged in page
+			window.location = '/main';
+		  }
+
+		  // Login Failed
+		  else { 
+			notifyFail(); 
+
+			// Reset the Form
+			setPassword("");
+			setUsername("");
+			setPasswordType("password");
+		  }
+
 		})
-		.catch(error =>  {
-		  window.alert("Login Failed: Try Again Later");
-		  return;
-		});
-
-
-		//alert("Account Found, Login Success!")
-	  
-
-
-		// CALL LOGIN API CALL HERE?
-
-		// IF SUCESSFULL, GO TO LOGGED IN PAGE
-
-		// IF NOT, ALERT THE USER
 	}	
 
 	// Updates Password when it has been changed
-	const onPasswordChange = (e) => {
-	  setPasswordInput(e.target.value);
-	};
+	const onPasswordChange = (e) => { setPassword(e.target.value); };
 
-	
 	// Updates Username when it has been changed
-	const onUsernameChange = (e) => {
-		setUsername(e.target.value);
-	  };
-
+	const onUsernameChange = (e) => { setUsername(e.target.value);};
 
 	// This function does the toggle password visibility
 	const toggle = () => {
@@ -98,6 +118,7 @@ function LoginForm() {
 				type="username" 
 				placeholder="Username"
 				value = {username}
+				required
 				onChange = {onUsernameChange} />
 
 			</Form.Group>
@@ -112,10 +133,11 @@ function LoginForm() {
 					<input
 					type={passwordType}
 					onChange={onPasswordChange}
-					value={passwordInput}
+					value={password}
 					placeholder="Password"
 					name="password"
 					className="form-control"
+					required
 					/>
 
 					{/* Toggle Password Visibility Button */}
@@ -152,6 +174,7 @@ function LoginForm() {
 			<Button variant="primary" type="submit">
 				Login
 			</Button>
+          	<ToastContainer />
 
 	  	</Form>
 	);

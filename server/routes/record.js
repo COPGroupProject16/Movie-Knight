@@ -28,8 +28,7 @@ recordRoutes.route("/record").get(async function (req, response) {
 });
 
 
-
-// Verify User Exists (PROTO-LOGIN)
+// LOGIN API Route
 recordRoutes.route("/record/login").post(async function (req, res) 
 {
   // Connect to MongoDB
@@ -55,12 +54,41 @@ recordRoutes.route("/record/login").post(async function (req, res)
   }
 
 });
+
+
+// LOGIN API Route
+recordRoutes.route("/record/checkUsername").post(async function (req, res) 
+{
+  // Connect to MongoDB
+  let db_connect = dbo.getDb();
+  
+  try 
+  {
+    // Check "Users" to see if user + pass exists
+    const user =  await db_connect.collection('users').findOne({ username: req.body.username});
+
+    // Case: Does Exists
+    if(user) { res.json({ exists: "True"  }); }
+    
+    // Case: Does NOT Exist
+    else { res.json({ exists: "False" }); }
+  } 
+
+  // Some kind of Server Error
+  catch (error) 
+  {
+    console.log(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+
+});
  
 
 
-// Add a new user TEST
-recordRoutes.route("/record/add").post(function (req, response) {
+// SIGNUP API Route
+recordRoutes.route("/record/signup").post(function (req, response) {
  let db_connect = dbo.getDb();
+ 
  let myobj =
   {
    username: req.body.username,
@@ -71,9 +99,12 @@ recordRoutes.route("/record/add").post(function (req, response) {
   };
 
   db_connect.collection("users").insertOne(myobj, function (err, res) {
-   if (err) throw err;
-   response.json(res);
+   
+    if (err) throw err;
+
   });
+
+  response.json({status: "success"});
 
 });
  

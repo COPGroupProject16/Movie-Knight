@@ -1,11 +1,10 @@
-import logo from './logo.png';
+import logo from './Images/logo.png';
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
 
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-import NavDropdown from 'react-bootstrap/NavDropdown';
 import AboutModal from './/aboutmodal';
 
 function HomeBar() {
@@ -21,15 +20,11 @@ function HomeBar() {
 
         <Nav>
 
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="me-auto">
-              <NavDropdown title="Options" id="basic-nav-dropdown">
+          {/* Homepage Link */}
+          <Navbar.Brand href="/home">Home</Navbar.Brand>
 
-                <NavDropdown.Item> <AboutModal></AboutModal> </NavDropdown.Item>
-
-              </NavDropdown>
-            </Nav>
-          </Navbar.Collapse>
+          {/* About Modal */}
+          <Navbar.Brand> <AboutModal/> </Navbar.Brand>
 
         </Nav>
 

@@ -7,26 +7,128 @@ import Button from 'react-bootstrap/Button';
 
 function SignupForm() {
 	
-	const [password, setPasswordValue] = React.useState("password");
-	const [passwordInput, setPasswordInput] = React.useState("");
-	const onPasswordChange = (e) => {
-	  setPasswordInput(e.target.value);
-	};
-	const toggle = () => {
-	  if (password === "password") {
-		setPasswordValue("text");
+	// The Form Values 
+	const [firstname, setFirstName] = React.useState("");
+	const [lastname, setLastName] = React.useState("");
+	const [email, setEmail] = React.useState("");
+	const [username, setUsername] = React.useState("");
+	const [password, setPassword] = React.useState("");
+	const [passwordCheck, setPasswordCheck] = React.useState("")
+
+	// The Password Type
+	const [passwordType, setPasswordType] = React.useState("passwordType");
+
+	// Update the Values Functions
+	const onFirstNameChange = (e) => { setFirstName(e.target.value); };
+	const onLastNameChange = (e) => { setLastName(e.target.value); };
+	const onEmailChange = (e) => { setEmail(e.target.value); };
+	const onUsernameChange = (e) => { setUsername(e.target.value);};
+	const onPasswordChange = (e) => { setPassword(e.target.value); };
+	const onPasswordCheckChange = (e) => { setPasswordCheck(e.target.value); };
+
+	// Toggle Between Show/Hide Password
+	const toggle = () => 
+	{
+	  if (passwordType === "passwordType") {
+		setPasswordType("text");
 		return;
 	  }
-	  setPasswordValue("password");
+
+	  setPasswordType("passwordType");	  
 	};
+
+	// This function is called when the user hits the submit button
+	const handleSubmit = (e) =>  {
+
+		// Prevents the page from reloading on button click
+		e.preventDefault();
+
+		// Verify that the passwords match each other
+		if (password != passwordCheck)
+		{
+			alert ("Passwords do not match.");
+			return;
+		}
+
+		// DEBUG: Log all form values
+		console.log("firstname = " + firstname);
+		console.log("lastname = " + lastname);
+		console.log("email = " + email);
+		console.log("username = " + username);
+		console.log("password = " + password);
+		console.log("passwordCheck = " + passwordCheck);
+
+
+
+		// JSON to be passed for CHECKUSERNAME
+		var jsonData = { username: username };
+
+		// Runs /login route in the Express Server --> Checks if username is taken
+		fetch("http://192.241.132.66:5000/record/checkUsername", 
+		{
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(jsonData)
+		})
+		.then(response => response.json())
+		.then(data => 
+		{
+			// Grab the Result
+			//console.log(data); // logs the JSON data received from the Express server
+			var res = JSON.parse(JSON.stringify(data)).exists;
+
+			// Username is taken
+			if(res == "True")
+			{
+				alert("Username is already taken");
+				return;
+			}
+
+			// Username is not taken --> continue with registration
+			else 
+			{
+				// JSON to be passed for SIGNUP
+				jsonData = 
+				{
+					firstname: firstname,
+					lastname: lastname,
+					email: email,
+					username: username,
+					password: password,
+				};
+
+				// Runs /sign route in the Express Server
+				fetch("http://192.241.132.66:5000/record/signup", 
+				{
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(jsonData)
+				})
+				.then(data =>
+				{
+					//console.log(data);
+					//console.log("reached the end of the request");
+
+					// Send the user to the logged in page
+					window.location = '/main';
+				})  
+			}
+		})
+
+
+	}
 	
 	return (
-        <Form>
+        <Form onSubmit = {handleSubmit}>
           <Form.Group className="mb-3" controlId="formBasicFname">
-            <Form.Label className="text-center">
-              First Name
-            </Form.Label>
-            <Form.Control type="email" placeholder="Enter First Name" />
+            <Form.Label className="text-center"> First Name </Form.Label>
+            <Form.Control 
+			type={firstname} placeholder="Enter First Name" onChange = {onFirstNameChange} required/>
+			<Form.Control.Feedback>Looks good!</Form.Control.Feedback>
           </Form.Group>
 
 
@@ -34,7 +136,7 @@ function SignupForm() {
             <Form.Label className="text-center">
               Last Name
             </Form.Label>
-            <Form.Control type="email" placeholder="Enter Last Name" />
+            <Form.Control type={lastname} placeholder="Enter Last Name" onChange = {onLastNameChange} required />
           </Form.Group>
 
 
@@ -42,7 +144,7 @@ function SignupForm() {
             <Form.Label className="text-center">
               Email Address
             </Form.Label>
-            <Form.Control type="email" placeholder="Enter Email" />
+            <Form.Control type = "email" value = {email} placeholder="Enter Email" onChange = {onEmailChange} required/>
           </Form.Group>
 
 
@@ -50,7 +152,7 @@ function SignupForm() {
             <Form.Label className="text-center">
               Username
             </Form.Label>
-            <Form.Control type="email" placeholder="Enter Username" />
+            <Form.Control type="username" value = {username} placeholder="Enter Username" onChange = {onUsernameChange} required/>
           </Form.Group>
 
 		  <Form.Label className="text-center">
@@ -59,16 +161,17 @@ function SignupForm() {
 
 		  <div className="input-group">
 				<input
-				type={password}
+				type={passwordType}
 				onChange={onPasswordChange}
-				value={passwordInput}
+				value={password}
 				placeholder="Enter Password"
-				name="password"
+				name="passwordType"
 				className="form-control"
+				required
 				/>
 
 				<button className="btn btn-primary" type = "button" onClick={toggle}>
-				{password === "password" ? (
+				{passwordType === "passwordType" ? (
 					<svg
 					width="20"
 					height="17"
@@ -102,13 +205,16 @@ function SignupForm() {
 
 		   <div className="input-group">
 				<input
-				type={password}
+				type={passwordType}
 				placeholder="Re-Type Password"
-				name="password"
+				name="passwordType"
 				className="form-control"
+				value = {passwordCheck}
+				onChange = {onPasswordCheckChange}
+				required
 				/>
 				<button className="btn btn-primary" type = "button" onClick={toggle}>
-				{password === "password" ? (
+				{passwordType === "passwordType" ? (
 					<svg
 					width="20"
 					height="17"
