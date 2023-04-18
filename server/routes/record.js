@@ -40,7 +40,7 @@ recordRoutes.route("/record/login").post(async function (req, res)
     const user =  await db_connect.collection('users').findOne({ username: req.body.username, password: req.body.password });
 
     // Case: Does Exists
-    if(user) { res.json({ exists: "True"  }); }
+    if(user) { res.json({ exists: "True", firstname: user.firstname, lastname: user.lastname, id: user._id}); }
     
     // Case: Does NOT Exist
     else { res.json({ exists: "False" }); }

@@ -1,7 +1,7 @@
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
-import LoginForm from './/loginform';
-import SignupForm from './/signupform';
+import LoginForm from './Forms/loginform';
+import SignupForm from './Forms/signupform';
 import React, { useState } from 'react';
 
 function HomeTab() {
