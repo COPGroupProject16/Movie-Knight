@@ -29,7 +29,9 @@ recordRoutes.route("/userlist/:username").get(async function (req, response) {
     });
 });
 
-// GETUSERCOLOR API ROUTE
+// USERCOLOR API ROUTE
+// grabs the value of the stored color
+// might require base case if not found
 recordRoutes.route("/usercolor").get(async function(req, response) {
   let db_connect = dbo.getDb("movieknightdb");
 
@@ -44,8 +46,9 @@ recordRoutes.route("/usercolor").get(async function(req, response) {
     });
 });
 
-// CHANGEUSERCOLOR API ROUTE
-recordRoutes.route("/usercolor/changeusercolor").put(async function(req, response) {
+// CHANGECOLOR API ROUTE
+// changes the stored color field in the given user
+recordRoutes.route("/usercolor/changecolor").put(async function(req, response) {
   let db_connect = dbo.getDb("movieknightdb");
 
   let query = {};
