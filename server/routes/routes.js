@@ -29,26 +29,46 @@ recordRoutes.route("/userlist/:username").get(async function (req, response) {
     });
 });
 
-// GETCOLOR API ROUTE
-recordRoutes.route("/userlist/:username/getcolor").get(async function(req, response) {
+// GETUSERCOLOR API ROUTE
+recordRoutes.route("/usercolor").get(async function(req, response) {
   let db_connect = dbo.getDb("movieknightdb");
 
-  let query = {username: req.params.username.toString};
+  let query = {_id:  req.body._id};
 
   db_connect
-    .colletion("user")
+    .colletion("users")
     .find(query)
-    .toArray()
     .then((data) => {
       console.log(data.color);
-      response.json(color);
+      response.json(data.color);
     });
 });
 
-/*// CHANGECOLOR API ROUTE
-recordRoutes.route("/userlist/:username/").put(async function(req, response) {
-  
-})*/
+// CHANGEUSERCOLOR API ROUTE
+recordRoutes.route("/usercolor/changeusercolor").put(async function(req, response) {
+  let db_connect = dbo.getDb("movieknightdb");
+
+  let query = {};
+  query._id= req.body._id;
+  query.color - req.body.color;
+
+  try
+  {
+    var userQuery = {_id: req.body._id};
+    const newColor = req.body.color;
+
+    console.log(req.body.color);
+
+    db_connect.collection('users').updateOne(userquery, color = newColor, function(err, res) {});
+    res.json({message:"Updated Color Scheme"});
+  }
+  // some kind of server error
+  catch (error)
+  {
+    console.log(error);
+    res.status(500).jscon({message: 'server error'});
+  }
+});
 
 recordRoutes.route("/userlist/add").post(async function (req, response) {
   // Connect to MongoDB
