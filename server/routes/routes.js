@@ -2,6 +2,7 @@ const express = require("express");
  
 // recordRoutes is an instance of the express router.
 // We use it to define our routes.
+// The router will be added as a middleware and will take control of requests starting with path /record.
 const recordRoutes = express.Router();
  
 // This will help us connect to the database
@@ -9,26 +10,8 @@ const dbo = require("../db/conn");
  
 // This help convert the id from string to ObjectId for the _id.
 const ObjectId = require("mongodb").ObjectId;
-
-// Used to grab the masterlist
-const axios = require("axios");
-
  
-// Gets the Masterlist of movies on the home page
-recordRoutes.route("/masterlist").get(async function (req, response) {
-  let db_connect = dbo.getDb("movieknightdb");
-
-  let query = {};
-
-  db_connect
-    .collection("masterlist")
-    .find()
-    .toArray()
-    .then((data) => {
-      response.json(data);
-    });
-});
-
+ 
 // Gets the Userlist associated with the logged in User
 recordRoutes.route("/userlist/:username").get(async function (req, response) {
   let db_connect = dbo.getDb("movieknightdb");
@@ -144,5 +127,7 @@ recordRoutes.route("/record/signup").post(function (req, response) {
   response.json({status: "success"});
 
 });
-
+ 
+ 
+ 
 module.exports = recordRoutes;

@@ -2,14 +2,15 @@ import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import LoginForm from './Forms/loginform';
 import SignupForm from './Forms/signupform';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 function HomeTab() {
   return (
     <Tabs
       defaultActiveKey="login"
-      id="uncontrolled-tab-example"
+      id="fill-tab-example"
       className="mb-3"
+      fill
     >
 
       <Tab eventKey="login" title="Login">

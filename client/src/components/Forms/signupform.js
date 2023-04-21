@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 // Import Toasts
 import { toast, ToastContainer } from 'react-toastify';
@@ -8,54 +8,114 @@ import "react-toastify/dist/ReactToastify.css";
 import 'bootstrap/dist/css/bootstrap.css';
 import Form from "react-bootstrap/Form";
 import Button from 'react-bootstrap/Button';
+import {Link, useNavigate} from 'react-router-dom';
+
+import axios from "axios";
 
 function SignupForm() {
 	
 	// The Form Values 
-	const [firstname, setFirstName] = React.useState("");
-	const [lastname, setLastName] = React.useState("");
-	const [email, setEmail] = React.useState("");
-	const [username, setUsername] = React.useState("");
-	const [password, setPassword] = React.useState("");
+	// const [firstname, setFirstName] = React.useState("");
+	// const [lastname, setLastName] = React.useState("");
+	// const [email, setEmail] = React.useState("");
+	// const [username, setUsername] = React.useState("");
+	// const [password, setPassword] = React.useState("");
 	const [passwordCheck, setPasswordCheck] = React.useState("")
 
+	// This holds the form's input values
+	const [data,setData] = useState
+	({
+		firstname: "",
+		lastname: "",
+		email: "",
+		username: "",
+		password: "",
+	})
+
+	const navigate = useNavigate()
+	const [error, setError] = useState("");
+
+	// Update the form's values when a change is detected
+	const handleChange = ({ currentTarget: input}) => { setData({...data,[input.name]:input.value}); }
+
 	// The Password Type
-	const [passwordType, setPasswordType] = React.useState("passwordType");
+	const [passwordType, setPasswordType] = React.useState("password");
 
 	// Update the Values Functions
-	const onFirstNameChange = (e) => { setFirstName(e.target.value); };
-	const onLastNameChange = (e) => { setLastName(e.target.value); };
-	const onEmailChange = (e) => { setEmail(e.target.value); };
-	const onUsernameChange = (e) => { setUsername(e.target.value);};
-	const onPasswordChange = (e) => { setPassword(e.target.value); };
+	// const onFirstNameChange = (e) => { setFirstName(e.target.value); };
+	// const onLastNameChange = (e) => { setLastName(e.target.value); };
+	// const onEmailChange = (e) => { setEmail(e.target.value); };
+	// const onUsernameChange = (e) => { setUsername(e.target.value);};
+	// const onPasswordChange = (e) => { setPassword(e.target.value); };
 	const onPasswordCheckChange = (e) => { setPasswordCheck(e.target.value); };
 
-	// Toggle Between Show/Hide Password
+	// Toggle Between Show/Hide Password Function
 	const toggle = () => 
 	{
-	  if (passwordType === "passwordType") {
+	  if (passwordType === "password") {
 		setPasswordType("text");
 		return;
 	  }
 
-	  setPasswordType("passwordType");	  
+	  setPasswordType("password");	  
 	};
 
+	const giveErrorNotification = (errorMsg) =>
+	{
+		toast.error(errorMsg, {
+			position: toast.POSITION.TOP_CENTER,
+			autoClose: 1000
+		});
+
+	}
+
 	// This function is called when the user hits the submit button
-	const handleSubmit = (e) =>  {
+	const handleSubmit = async(e) =>  {
 
 		// Prevents the page from reloading on button click
 		e.preventDefault();
 
 		// Verify that the passwords match each other
-		if (password != passwordCheck)
+		if (data.password != passwordCheck)
 		{
 			// Pop Error Message
-			toast.error("Passwords Must Match", {
-				position: toast.POSITION.TOP_CENTER
-			});
-
+			giveErrorNotification("Passwords Do Not Match")
 			return;
+		}
+
+		try {
+			const url = "http://192.241.132.66:5000/signup";
+			const {data: res} = await axios.post(url,data)
+			localStorage.setItem("token",res.data);
+			//navigate("/main")
+
+			console.log("Message: " + res.message);
+			console.log("JWT Token: " + res.data);
+
+		} catch (error) 
+		{
+			switch (error.response.status)
+			{
+				// console.log("Error Status: " + error.response.status);
+				// console.log("Error Message: " + error.message);
+				case 409:
+					giveErrorNotification("Username is Already Taken");
+					break;
+
+				case 500:
+					giveErrorNotification("Server Error: Try Again Later")	
+					break;
+
+				case 404:
+					giveErrorNotification("Server Not Found: Try Again Later")
+					break;
+				
+				default:
+					break;	
+			}
+
+
+
 		}
 
 		// DEBUG: Log all form values
@@ -67,78 +127,80 @@ function SignupForm() {
 		// console.log("passwordCheck = " + passwordCheck);
 
 
-		// JSON to be passed for CHECKUSERNAME
-		var jsonData = { username: username };
+		// // JSON to be passed for CHECKUSERNAME
+		// var jsonData = { username: username };
 
-		// Runs /login route in the Express Server --> Checks if username is taken
-		fetch("http://192.241.132.66:5000/record/checkUsername", 
-		{
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify(jsonData)
-		})
-		.then(response => response.json())
-		.then(data => 
-		{
-			// Grab the Result
-			//console.log(data); // logs the JSON data received from the Express server
-			var res = JSON.parse(JSON.stringify(data)).exists;
-			//console.log(res); // logs the
+		// // Runs /login route in the Express Server --> Checks if username is taken
+		// fetch("http://192.241.132.66:5000/record/checkUsername", 
+		// {
+		// 	method: "POST",
+		// 	headers: {
+		// 		"Content-Type": "application/json",
+		// 	},
+		// 	body: JSON.stringify(jsonData)
+		// })
+		// .then(response => response.json())
+		// .then(data => 
+		// {
+		// 	// Grab the Result
+		// 	//console.log(data); // logs the JSON data received from the Express server
+		// 	var res = JSON.parse(JSON.stringify(data)).exists;
+		// 	//console.log(res); // logs the
 			
 
-			// Username is taken
-			if(res == "True")
-			{
-				toast.error("Username is already taken", {
-					position: toast.POSITION.TOP_CENTER
-				});
-				return;
-			}
+		// 	// Username is taken
+		// 	if(res == "True")
+		// 	{
+		// 		// This is the Error Message
+		// 		toast.error("Username is already taken", {
+		// 			position: toast.POSITION.TOP_CENTER,
+		// 			autoClose: 1000,
+		// 		});
+		// 		return;
+		// 	}
 
-			// Username is not taken --> continue with registration
-			else 
-			{
-				// JSON to be passed for SIGNUP
-				jsonData = 
-				{
-					firstname: firstname,
-					lastname: lastname,
-					email: email,
-					username: username,
-					password: password,
-				};
+		// 	// Username is not taken --> continue with registration
+		// 	else 
+		// 	{
+		// 		// JSON to be passed for SIGNUP
+		// 		jsonData = 
+		// 		{
+		// 			firstname: firstname,
+		// 			lastname: lastname,
+		// 			email: email,
+		// 			username: username,
+		// 			password: password,
+		// 		};
 
-				// Runs /sign route in the Express Server
-				fetch("http://192.241.132.66:5000/record/signup", 
-				{
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify(jsonData)
-				})
-				.then(data =>
-				{
-					//console.log(data);
-					//console.log("reached the end of the request");
+		// 		// Runs /sign route in the Express Server
+		// 		fetch("http://192.241.132.66:5000/record/signup", 
+		// 		{
+		// 		method: "POST",
+		// 		headers: {
+		// 			"Content-Type": "application/json",
+		// 		},
+		// 		body: JSON.stringify(jsonData)
+		// 		})
+		// 		.then(data =>
+		// 		{
+		// 			//console.log(data);
+		// 			//console.log("reached the end of the request");
 
-					// Send the user to the logged in page
-					window.location = '/main';
-				})  
-			}
-		})
+		// 			// Send the user to the logged in page
+		// 			window.location = '/main';
+		// 		})  
+		// 	}
+		// })
 
 
 	}
 	
 	return (
-        <Form onSubmit = {handleSubmit}>
+        <Form>
           <Form.Group className="mb-3" controlId="formBasicFname">
             <Form.Label className="text-center"> First Name </Form.Label>
             <Form.Control 
-			type={firstname} placeholder="Enter First Name" onChange = {onFirstNameChange} required/>
+			type="text" value = {data.firstname} name = "firstname" placeholder="Enter First Name" onChange = {handleChange} required/>
 			<Form.Control.Feedback>Looks good!</Form.Control.Feedback>
           </Form.Group>
 
@@ -147,7 +209,7 @@ function SignupForm() {
             <Form.Label className="text-center">
               Last Name
             </Form.Label>
-            <Form.Control type={lastname} placeholder="Enter Last Name" onChange = {onLastNameChange} required />
+            <Form.Control type="text" value = {data.lastname} name = "lastname" placeholder="Enter Last Name" onChange = {handleChange} required />
           </Form.Group>
 
 
@@ -155,7 +217,7 @@ function SignupForm() {
             <Form.Label className="text-center">
               Email Address
             </Form.Label>
-            <Form.Control type = "email" value = {email} placeholder="Enter Email" onChange = {onEmailChange} required/>
+            <Form.Control type="email" value = {data.email} name = "email" placeholder="Enter Email" onChange = {handleChange} required/>
           </Form.Group>
 
 
@@ -163,7 +225,7 @@ function SignupForm() {
             <Form.Label className="text-center">
               Username
             </Form.Label>
-            <Form.Control type="username" value = {username} placeholder="Enter Username" onChange = {onUsernameChange} required/>
+            <Form.Control type="text" value = {data.username} name = "username" placeholder="Enter Username" onChange = {handleChange} required/>
           </Form.Group>
 
 		  <Form.Label className="text-center">
@@ -173,16 +235,16 @@ function SignupForm() {
 		  <div className="input-group">
 				<input
 				type={passwordType}
-				onChange={onPasswordChange}
-				value={password}
+				onChange={handleChange}
+				value={data.password}
 				placeholder="Enter Password"
-				name="passwordType"
+				name="password"
 				className="form-control"
 				required
 				/>
 
 				<button className="btn btn-primary" type = "button" onClick={toggle}>
-				{passwordType === "passwordType" ? (
+				{passwordType === "password" ? (
 					<svg
 					width="20"
 					height="17"
@@ -225,7 +287,7 @@ function SignupForm() {
 				required
 				/>
 				<button className="btn btn-primary" type = "button" onClick={toggle}>
-				{passwordType === "passwordType" ? (
+				{passwordType === "password" ? (
 					<svg
 					width="20"
 					height="17"
@@ -252,7 +314,8 @@ function SignupForm() {
 		    </div>
 
 			<br></br>
-			<Button variant="primary" type="submit">
+			{error && <div>{error}</div>}
+			<Button variant="primary" type="submit" onClick = {handleSubmit}>
 				Sign Up
 			</Button>
 
