@@ -2,7 +2,6 @@ const express = require("express");
  
 // recordRoutes is an instance of the express router.
 // We use it to define our routes.
-// The router will be added as a middleware and will take control of requests starting with path /record.
 const recordRoutes = express.Router();
  
 // This will help us connect to the database
@@ -10,22 +9,77 @@ const dbo = require("../db/conn");
  
 // This help convert the id from string to ObjectId for the _id.
 const ObjectId = require("mongodb").ObjectId;
+
+// Used to grab the masterlist
+const axios = require("axios");
+
  
- 
-// This section will help you get a list of all the records.
-recordRoutes.route("/record").get(async function (req, response) {
-  let db_connect = dbo.getDb();
+// Gets the Masterlist of movies on the home page
+recordRoutes.route("/masterlist").get(async function (req, response) {
+  let db_connect = dbo.getDb("movieknightdb");
+
+  let query = {};
 
   db_connect
-    .collection("records")
-    .find({})
+    .collection("masterlist")
+    .find()
     .toArray()
     .then((data) => {
-      console.log(data);
       response.json(data);
     });
-
 });
+
+// Gets the Userlist associated with the logged in User
+recordRoutes.route("/userlist/:username").get(async function (req, response) {
+  let db_connect = dbo.getDb("movieknightdb");
+
+  let query = {username: req.params.username.toString};
+
+
+  db_connect
+    .collection("user")
+    .find(query)
+    .toArray()
+    .then((data) => {
+      console.log(data.userlist);
+      response.json(data);
+    });
+});
+
+recordRoutes.route("/userlist/:username/:moviename/add").post(async function (req, response) {
+  let db_connect = dbo.getDb("movieknightdb");
+
+  let query = {username: req.params.username.toString};
+
+  db_connect
+    .collection("user")
+    .updateOne(query,{ $push: { userlist: req.params.moviename}}, function (err, res) {
+      console.log(res);
+      response.json(res);
+    });
+});
+
+
+// Deletes a movie from the logged in User's list
+recordRoutes.route("/delete/:username").delete((req, response) => {
+  let db_connect = dbo.getDb("movieknightdb");
+
+  let query = {};
+
+  query.ObjectId = req.params.ObjectId;
+  query.userID = parseInt(req.params.id)
+
+  db_connect
+    .collection("usermovies")
+    .deleteOne(query, function (err, obj) {
+    if (err) throw err;
+    console.log("1 movie deleted");
+    response.json(obj);
+  });
+});
+
+
+
 
 
 // LOGIN API Route
@@ -107,39 +161,5 @@ recordRoutes.route("/record/signup").post(function (req, response) {
   response.json({status: "success"});
 
 });
- 
 
-
-// This section will help you update a record by id.
-recordRoutes.route("/update/:id").post(function (req, response) {
- let db_connect = dbo.getDb();
- let myquery = { _id: ObjectId(req.params.id) };
- let newvalues = {
-   $set: {
-     name: req.body.name,
-     position: req.body.position,
-     level: req.body.level,
-   },
- };
- db_connect
-   .collection("records")
-   .updateOne(myquery, newvalues, function (err, res) {
-     if (err) throw err;
-     console.log("1 document updated");
-     response.json(res);
-   });
-});
- 
-// This section will help you delete a record
-recordRoutes.route("/:id").delete((req, response) => {
- let db_connect = dbo.getDb();
- let myquery = { _id: ObjectId(req.params.id) };
- 
- db_connect.collection("records").deleteOne(myquery, function (err, obj) {
-   if (err) throw err;
-   console.log("1 document deleted");
-   response.json(obj);
- });
-});
- 
 module.exports = recordRoutes;
