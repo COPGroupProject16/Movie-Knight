@@ -29,6 +29,27 @@ recordRoutes.route("/userlist/:username").get(async function (req, response) {
     });
 });
 
+// GETCOLOR API ROUTE
+recordRoutes.route("/userlist/:username/getcolor").get(async function(req, response) {
+  let db_connect = dbo.getDb("movieknightdb");
+
+  let query = {username: req.params.username.toString};
+
+  db_connect
+    .colletion("user")
+    .find(query)
+    .toArray()
+    .then((data) => {
+      console.log(data.color);
+      response.json(color);
+    });
+});
+
+/*// CHANGECOLOR API ROUTE
+recordRoutes.route("/userlist/:username/").put(async function(req, response) {
+  
+})*/
+
 recordRoutes.route("/userlist/add").post(async function (req, response) {
   // Connect to MongoDB
   let db_connect = dbo.getDb("movieknightdb");
@@ -115,7 +136,8 @@ recordRoutes.route("/record/signup").post(function (req, response) {
    password: req.body.password,   
    firstname: req.body.firstname,
    lastname: req.body.lastname,
-   email: req.body.email
+   email: req.body.email,
+   color: 0
   };
 
   db_connect.collection("users").insertOne(myobj, function (err, res) {
@@ -127,6 +149,8 @@ recordRoutes.route("/record/signup").post(function (req, response) {
   response.json({status: "success"});
 
 });
+
+
  
  
  
