@@ -46,17 +46,31 @@ recordRoutes.route("/userlist/:username").get(async function (req, response) {
     });
 });
 
-recordRoutes.route("/userlist/:username/:moviename/add").post(async function (req, response) {
+recordRoutes.route("/userlist/add").post(async function (req, response) {
+  // Connect to MongoDB
   let db_connect = dbo.getDb("movieknightdb");
+    
+  try 
+  {
+    // Check "Users" to see if user + pass exists
+    const user =  await db_connect.collection('users').findOne({ username: req.body.username, password: req.body.password });
 
-  let query = {username: req.params.username.toString};
+    const movie = await db_connect.collection('masterlist').findOne({ _id: req.body._id});
 
-  db_connect
-    .collection("user")
-    .updateOne(query,{ $push: { userlist: req.params.moviename}}, function (err, res) {
+
+    db_connect.collection("users").updateOne(query,{ $push: { userlist: req.params.moviename}}, function (err, res) 
+    {
       console.log(res);
       response.json(res);
     });
+  } 
+
+  // Some kind of Server Error
+  catch (error) 
+  {
+    console.log(error);
+    res.status(500).json({ message: 'Server error' });
+  }
 });
 
 
@@ -79,9 +93,6 @@ recordRoutes.route("/delete/:username").delete((req, response) => {
 });
 
 
-
-
-
 // LOGIN API Route
 recordRoutes.route("/record/login").post(async function (req, res) 
 {
@@ -95,34 +106,6 @@ recordRoutes.route("/record/login").post(async function (req, res)
 
     // Case: Does Exists
     if(user) { res.json({ exists: "True", firstname: user.firstname, lastname: user.lastname, id: user._id}); }
-    
-    // Case: Does NOT Exist
-    else { res.json({ exists: "False" }); }
-  } 
-
-  // Some kind of Server Error
-  catch (error) 
-  {
-    console.log(error);
-    res.status(500).json({ message: 'Server error' });
-  }
-
-});
-
-
-// LOGIN API Route
-recordRoutes.route("/record/checkUsername").post(async function (req, res) 
-{
-  // Connect to MongoDB
-  let db_connect = dbo.getDb();
-  
-  try 
-  {
-    // Check "Users" to see if user + pass exists
-    const user =  await db_connect.collection('users').findOne({ username: req.body.username});
-
-    // Case: Does Exists
-    if(user) { res.json({ exists: "True"  }); }
     
     // Case: Does NOT Exist
     else { res.json({ exists: "False" }); }
