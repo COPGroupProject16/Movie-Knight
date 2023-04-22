@@ -1,13 +1,21 @@
 import React, { useEffect } from 'react';
 
+<<<<<<< Updated upstream
 import './settngs.css';
+=======
+import './settings.css';
+>>>>>>> Stashed changes
 
 import HomeBar from '../../../Components/navbar';
 import HomeCard from '../../../Components/homecard';
 import MainBar from '../../../Components/mainbar';
 import MainTab from '../../../Components/maintab';
 import SettingsBox from '../../../Components/settingsBox';
+<<<<<<< Updated upstream
 import Button from '../../../Components/colorButton';
+=======
+import ColorButton from '../../../Components/colorButton';
+>>>>>>> Stashed changes
 import loadColor from '../../../Components/loadColor';
 
 import { Link, useNavigate } from 'react-router-dom';
@@ -61,14 +69,21 @@ function Settings() {
 
     return (
 
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
         <div className="Settings">
 
             <MainBar />
             <SettingsBox>
+<<<<<<< Updated upstream
                 <Button left="30%" background-color="blue">
                     Hello
                 </Button>
 
+=======
+>>>>>>> Stashed changes
             </SettingsBox>
             <ToastContainer />
 
@@ -76,4 +91,8 @@ function Settings() {
     );
 }
 
+<<<<<<< Updated upstream
 export default Main;
+=======
+export default Settings;
+>>>>>>> Stashed changes

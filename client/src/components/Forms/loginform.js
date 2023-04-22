@@ -1,49 +1,40 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { setCookie, useCookies } from 'react-cookie';
 
 // Import Bootstrap
 import Form from "react-bootstrap/Form";
 import Button from 'react-bootstrap/Button';
 import 'bootstrap/dist/css/bootstrap.css';
+import {Link, useNavigate} from 'react-router-dom';
+
+import axios from "axios";
 
 // Import Toasts
 import { toast, ToastContainer } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 
-function LoginForm() {
-	
+function LoginForm() 
+{	
 	// These are "Variables" (I think)
-
 	// "React.useState is the deafault state of the variable on load, ie. the state of the password type is "password" AKA its hidden
+
+	const [data,setData] = useState
+	({
+		username: "",
+		password: "",
+	})
+
+	// Update the form's values when a change is detected
+	const handleChange = ({ currentTarget: input}) => { setData({...data,[input.name]:input.value}); }
+
 	const [passwordType, setPasswordType] = React.useState("password"); // Password Type (text == visible, password == hidden)
-	const [password, setPassword] = React.useState("");
-	const [username, setUsername] = React.useState("");
 
-	const notifyFail = () => {
-		toast.error("Invalid Username/Password Combination", {
-			position: toast.POSITION.TOP_CENTER
-		});
-	};
-
-	const notifySuccess = () => {
-		toast.success("Login Successful!", {
-			position: toast.POSITION.TOP_CENTER
-		});
-	};
-
-	// Save User Profile as a cookie for 30 minutes
-	const saveCookie = (res) => {
-		let minutes = 30;
-		let date = new Date();
-		date.setTime(date.getTime()+(minutes*60*1000));	
-		document.cookie = "firstName=" + res.firstname + ";" + "expires=" + date.toGMTString();
-		document.cookie = "lastName=" + res.lastname + ";" + "expires=" + date.toGMTString();
-		document.cookie = "id=" + res.id + ";" + "expires=" + date.toGMTString();
-		//console.log(document.cookie);
-	}
+	//const navigate = useNavigate()
+	const [error, setError] = useState("");
+	const navigate = useNavigate()
 
 	// This function is called when the user hits the submit button
-	const handleSubmit = (e) =>  {
+	const handleSubmit = async(e) =>  {
 		
 		// Removes Any Exisitng Toast
 		toast.dismiss();
@@ -55,68 +46,47 @@ function LoginForm() {
 		// console.log("Password: " + password);
 
 		//  JSON to be passed to Express Server
-		const jsonData =
+
+		try 
 		{
-			username: username,
-			password: password,   
-		};
+			const url = "http://192.241.132.66:5000/login";
+			const {data: res} = await axios.post(url,data)
+			localStorage.setItem("token",res.data);
+			navigate("/main")
 
-		// Runs /login route in the Express Server
-		fetch("http://192.241.132.66:5000/record/login", 
+			console.log("Message: " + res.message);
+			console.log("JWT Token: " + res.data);
+
+		} 
+		catch (error) 
 		{
-		  method: "POST",
-		  headers: {
-			"Content-Type": "application/json",
-		  },
-		  body: JSON.stringify(jsonData)
-		})
-		.then(response => response.json())
-		.then(data => 
-		{
-		  // Grab the Result
-		  console.log(data); // logs the JSON data received from the Express server
-		  var res = JSON.parse(JSON.stringify(data));
+			console.log(error.response.status);
 
-		//   var temp = JSON.parse(JSON.stringify(data));
+			switch (error.response.status)
+			{
+				case 409:
+					giveErrorNotification("Invalid Username/Password Combination");
+					break;
 
-		//   console.log("status: " + temp.exists);
-		//   console.log("firstname: " + temp.firstname);
-		//   console.log("lastname: " + temp.lastname);
-		//   console.log("id: " + temp.id);
+				case 500 :
+					giveErrorNotification("Internal Server Error, Try Again Later");	
+					break;
+				
+				default:
+					break;
+			}
+		}	
+	}
 
+	// Toast Error Message
+	const giveErrorNotification = (errorMsg) =>
+	{
+		toast.error(errorMsg, {
+			position: toast.POSITION.TOP_CENTER,
+			autoClose: 1000
+		});
 
-		  // Login Sucessfully
-		  if(res.exists == "True")
-		  {
-			//alert("Login Success");
-			notifySuccess();
-
-			//Setup Cookies
-			//setCookie('firstname', res.firstname, { path: '/' });
-			saveCookie(res);
-		  		
-			// Send the user to the logged in page
-			window.location = '/main';
-		  }
-
-		  // Login Failed
-		  else { 
-			notifyFail(); 
-
-			// Reset the Form
-			setPassword("");
-			setUsername("");
-			setPasswordType("password");
-		  }
-
-		})
-	}	
-
-	// Updates Password when it has been changed
-	const onPasswordChange = (e) => { setPassword(e.target.value); };
-
-	// Updates Username when it has been changed
-	const onUsernameChange = (e) => { setUsername(e.target.value);};
+	}
 
 	// This function does the toggle password visibility
 	const toggle = () => {
@@ -132,18 +102,20 @@ function LoginForm() {
 	return (
 
 		// The Login Form
-		<Form onSubmit = {handleSubmit}>
+		<Form>
 
 			{/* Username Part */}
 			<Form.Group className="mb-3" controlId="formBasicUsername" name ="formBasicUsername">
 				<Form.Label>Username</Form.Label>
 
 				<Form.Control 
-				type="username" 
+				type="text" 
 				placeholder="Username"
-				value = {username}
+				name = "username"
+				value = {data.username}
+				onChange = {handleChange} 
 				required
-				onChange = {onUsernameChange} />
+				/>
 
 			</Form.Group>
 
@@ -156,8 +128,8 @@ function LoginForm() {
 					{/* Password Input Field */}
 					<input
 					type={passwordType}
-					onChange={onPasswordChange}
-					value={password}
+					onChange={handleChange}
+					value={data.password}
 					placeholder="Password"
 					name="password"
 					className="form-control"
@@ -195,7 +167,7 @@ function LoginForm() {
 			</Form.Group>
 
 			{/* The Login Button */}
-			<Button variant="primary" type="submit">
+			<Button variant="primary" type="submit" onClick = {handleSubmit}>
 				Login
 			</Button>
           	<ToastContainer />

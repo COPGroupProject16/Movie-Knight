@@ -1,5 +1,5 @@
 // JavaScript source code
-// import React
+import React from "react";
 
 // Function takes in the palette value and returns the selected
 // palette for the user.

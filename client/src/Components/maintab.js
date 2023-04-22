@@ -8,31 +8,46 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
+import Button from 'react-bootstrap/Button';
+import Card from 'react-bootstrap/Card';
+
+import CardItem from "./cardItem"
+import ReactDOM from 'react-dom/client';
+
+import {Link, useNavigate} from 'react-router-dom';
+import axios from "axios";
+
+const loadAll = () =>
+{
+  const container = document.getElementById('grid');
+  const root = ReactDOM.createRoot(container);
+  const data = 3;
+  root.render();
+  
+
+};
 
 function MainTab() {
   return (
-    <Container fluid className="justify-content-md-center" id = "mainTabs">
-            <Row className="justify-content-md-center">
-                <Col className="justify-content-md-center">
-                    <Tabs
-                    defaultActiveKey="login"
-                    id="uncontrolled-tab-example"
-                    className="mb-3 justify-content-md-center"
-                    bg = "light"
-                    fill
-                    >
-                        <Tab eventKey="login" title="Browse Movies">
-                                <p>BROWSE TEST</p>
-                        </Tab>
+    <Tabs
+    defaultActiveKey="login"
+    id="uncontrolled-tab-example"
+    className="mb-3 justify-content-md-center"
+    bg = "light"
+    fill
+    >
+      {/* Browse Movies Tab */}
+      <Tab eventKey="login" title="Browse Movies">
+        <Col>
+          <CardItem></CardItem>
+        </Col>
+      </Tab>
 
-                        
-                        <Tab eventKey="signup" title="My Reviews">
-                                <p>MY REVIEWS TEST</p>
-                        </Tab>
-                    </Tabs>
-                </Col>
-            </Row>
-    </Container>
+      {/* My Reviews Tab */}
+      <Tab eventKey="signup" title="My Reviews">
+              <p>MY REVIEWS TEST</p>
+      </Tab>
+    </Tabs>
   );
 }
 

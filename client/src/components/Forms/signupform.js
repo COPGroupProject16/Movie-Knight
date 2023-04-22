@@ -15,11 +15,6 @@ import axios from "axios";
 function SignupForm() {
 	
 	// The Form Values 
-	// const [firstname, setFirstName] = React.useState("");
-	// const [lastname, setLastName] = React.useState("");
-	// const [email, setEmail] = React.useState("");
-	// const [username, setUsername] = React.useState("");
-	// const [password, setPassword] = React.useState("");
 	const [passwordCheck, setPasswordCheck] = React.useState("")
 
 	// This holds the form's input values
@@ -42,11 +37,6 @@ function SignupForm() {
 	const [passwordType, setPasswordType] = React.useState("password");
 
 	// Update the Values Functions
-	// const onFirstNameChange = (e) => { setFirstName(e.target.value); };
-	// const onLastNameChange = (e) => { setLastName(e.target.value); };
-	// const onEmailChange = (e) => { setEmail(e.target.value); };
-	// const onUsernameChange = (e) => { setUsername(e.target.value);};
-	// const onPasswordChange = (e) => { setPassword(e.target.value); };
 	const onPasswordCheckChange = (e) => { setPasswordCheck(e.target.value); };
 
 	// Toggle Between Show/Hide Password Function
@@ -87,7 +77,7 @@ function SignupForm() {
 			const url = "http://192.241.132.66:5000/signup";
 			const {data: res} = await axios.post(url,data)
 			localStorage.setItem("token",res.data);
-			//navigate("/main")
+			navigate("/main")
 
 			console.log("Message: " + res.message);
 			console.log("JWT Token: " + res.data);
@@ -96,8 +86,6 @@ function SignupForm() {
 		{
 			switch (error.response.status)
 			{
-				// console.log("Error Status: " + error.response.status);
-				// console.log("Error Message: " + error.message);
 				case 409:
 					giveErrorNotification("Username is Already Taken");
 					break;
@@ -113,86 +101,7 @@ function SignupForm() {
 				default:
 					break;	
 			}
-
-
-
 		}
-
-		// DEBUG: Log all form values
-		// console.log("firstname = " + firstname);
-		// console.log("lastname = " + lastname);
-		// console.log("email = " + email);
-		// console.log("username = " + username);
-		// console.log("password = " + password);
-		// console.log("passwordCheck = " + passwordCheck);
-
-
-		// // JSON to be passed for CHECKUSERNAME
-		// var jsonData = { username: username };
-
-		// // Runs /login route in the Express Server --> Checks if username is taken
-		// fetch("http://192.241.132.66:5000/record/checkUsername", 
-		// {
-		// 	method: "POST",
-		// 	headers: {
-		// 		"Content-Type": "application/json",
-		// 	},
-		// 	body: JSON.stringify(jsonData)
-		// })
-		// .then(response => response.json())
-		// .then(data => 
-		// {
-		// 	// Grab the Result
-		// 	//console.log(data); // logs the JSON data received from the Express server
-		// 	var res = JSON.parse(JSON.stringify(data)).exists;
-		// 	//console.log(res); // logs the
-			
-
-		// 	// Username is taken
-		// 	if(res == "True")
-		// 	{
-		// 		// This is the Error Message
-		// 		toast.error("Username is already taken", {
-		// 			position: toast.POSITION.TOP_CENTER,
-		// 			autoClose: 1000,
-		// 		});
-		// 		return;
-		// 	}
-
-		// 	// Username is not taken --> continue with registration
-		// 	else 
-		// 	{
-		// 		// JSON to be passed for SIGNUP
-		// 		jsonData = 
-		// 		{
-		// 			firstname: firstname,
-		// 			lastname: lastname,
-		// 			email: email,
-		// 			username: username,
-		// 			password: password,
-		// 		};
-
-		// 		// Runs /sign route in the Express Server
-		// 		fetch("http://192.241.132.66:5000/record/signup", 
-		// 		{
-		// 		method: "POST",
-		// 		headers: {
-		// 			"Content-Type": "application/json",
-		// 		},
-		// 		body: JSON.stringify(jsonData)
-		// 		})
-		// 		.then(data =>
-		// 		{
-		// 			//console.log(data);
-		// 			//console.log("reached the end of the request");
-
-		// 			// Send the user to the logged in page
-		// 			window.location = '/main';
-		// 		})  
-		// 	}
-		// })
-
-
 	}
 	
 	return (

@@ -9,3 +9,15 @@
 {
   background-color: black;
 }
+
+.nav-tabs .nav-link {
+  background-color: #FFFFFF !important;
+  color: #000000 !important;
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+}
+
+.nav-tabs .nav-link.active {
+  border-bottom: solid 4px white !important;
+}

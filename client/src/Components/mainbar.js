@@ -11,11 +11,12 @@ function MainBar()
   // This is the function that is ran when the page is loaded for the first time
   useEffect(() => 
   {
-    const cookies = document.cookie.split("; ");
-    const cookieFirst = cookies.find((row) => row.startsWith("firstName=")).split("=")[1];
-    const cookieLast = cookies.find((row) => row.startsWith("lastName=")).split("=")[1];
+    // const cookies = document.cookie.split("; ");
+    // const cookieFirst = cookies.find((row) => row.startsWith("firstName=")).split("=")[1];
+    // const cookieLast = cookies.find((row) => row.startsWith("lastName=")).split("=")[1];
 
-    document.getElementById("signedInAs").innerHTML = "Signed in as: " + cookieFirst + " " + cookieLast;
+    // document.getElementById("signedInAs").innerHTML = "Signed in as: " + cookieFirst + " " + cookieLast;
+    // document.getElementById("signedInAs").innerHTML = "Signed in as: DEBUG."
     //console.log(document.getElementById("signedInAs").innerHTML);
 
   }, []); // <-- empty array means 'run once'
@@ -26,12 +27,24 @@ function MainBar()
     e.preventDefault();
 
     // Wipe the cookies
-	document.cookie.split(";").forEach(function(c) { document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); });
+	  //document.cookie.split(";").forEach(function(c) { document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); });
 
     // Send us back to Home
     window.location = '/home';
   }
 
+
+  // Logs the user out of the accoutn and sends them back to home
+  const handleLogout = (e) =>
+  {
+    //console.log(localStorage.getItem("token"));
+    
+    // Remove the JWT Token 
+    localStorage.removeItem("token");
+    window.location = '/home';
+  }
+
+  
   return (
     <Navbar bg = 'light' expand = 'large'>
       <Container>
@@ -44,11 +57,10 @@ function MainBar()
         
         {/* Who is Signed in Text */}
         <Navbar.Text id = "signedInAs">
-            Signed in as: Mark Otto
         </Navbar.Text>
 
         {/* Log Out Button */}
-        <Button variant="primary" type="submit" onClick = {handleSubmit}>
+        <Button variant="primary" type="submit" onClick = {handleLogout}>
             Log Out
         </Button>
 

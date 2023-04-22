@@ -7,6 +7,7 @@ import { CookiesProvider } from "react-cookie";
 import Home from "./Components/Pages/Home/home";
 import Login from "./Components/Pages/Login/login";
 import Main from "./Components/Pages/Main/main";
+import Settings from "./Components/Pages/Settings/settings";
 
 // This is the Routing Layout for the application: 
 
@@ -32,6 +33,7 @@ export default function App() {
             <Route path="home" element={<Home />} />
             <Route path="login" element={<Login />} />
             <Route path="main" element={<Main />} />
+            <Route path="settings" element={<Settings />} />
           </Route>
           
         </Routes>
