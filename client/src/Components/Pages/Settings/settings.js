@@ -65,7 +65,7 @@ function Settings() {
 
             <MainBar />
             <SettingsBox>
-                <Button left="30%">
+                <Button left="30%" background-color="blue">
                     Hello
                 </Button>
 
