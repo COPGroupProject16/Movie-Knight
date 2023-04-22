@@ -21,57 +21,13 @@ recordRoutes.route("/userlist").get(async function (req, res) {
     const user = await db_connect.collection('users').findOne({ _id: req.body._id});
 
     console.log(user);
-    res.json(user);
+    res.json(user.);
   }
   
   catch(error)
   {
     console.log(error);
     res.status(500).json({ message: 'Server error' });
-  }
-});
-
-// USERCOLOR API ROUTE
-// grabs the value of the stored color
-// might require base case if not found
-recordRoutes.route("/usercolor").get(async function(req, response) {
-  let db_connect = dbo.getDb("movieknightdb");
-
-  let query = {_id:  req.body._id};
-
-  db_connect
-    .colletion("users")
-    .find(query)
-    .then((data) => {
-      console.log(data.color);
-      response.json(data.color);
-    });
-});
-
-// CHANGECOLOR API ROUTE
-// changes the stored color field in the given user
-recordRoutes.route("/usercolor/changecolor").put(async function(req, response) {
-  let db_connect = dbo.getDb("movieknightdb");
-
-  let query = {};
-  query._id= req.body._id;
-  query.color - req.body.color;
-
-  try
-  {
-    var userQuery = {_id: req.body._id};
-    const newColor = req.body.color;
-
-    console.log(req.body.color);
-
-    db_connect.collection('users').updateOne(userquery, color = newColor, function(err, res) {});
-    res.json({message:"Updated Color Scheme"});
-  }
-  // some kind of server error
-  catch (error)
-  {
-    console.log(error);
-    res.status(500).jscon({message: 'server error'});
   }
 });
 
@@ -118,37 +74,10 @@ recordRoutes.route("/delete/:username").delete((req, response) => {
     response.json(obj);
   });
 });
-
-
-// SIGNUP API Route
-recordRoutes.route("/record/signup").post(function (req, response) {
- let db_connect = dbo.getDb();
- 
- let myobj =
-  {
-   username: req.body.username,
-   password: req.body.password,   
-   firstname: req.body.firstname,
-   lastname: req.body.lastname,
-   email: req.body.email,
-   color: 0
-  };
-
-  db_connect.collection("users").insertOne(myobj, function (err, res) {
-   
-    if (err) throw err;
-
-  });
-
-  response.json({status: "success"});
-
-});
-
-
  
 
 //TESTING A NEW LOGIN ROUTE FORMAT (using JWT)
-recordRoutes.route("/record/newlogin",async (req, res) => {
+/* recordRoutes.route("/record/newlogin",async (req, res) => {
   try {
     const{ error } = validate(req.body);
     if (error)
@@ -168,7 +97,7 @@ recordRoutes.route("/record/newlogin",async (req, res) => {
   } catch (error) {
     res.status(500).send({message:"Internal Server Error"});
   }
-});  
+}); */ 
 
 // LOGIN API Route
 recordRoutes.route("/login").post(async function (req, res) 
@@ -262,6 +191,50 @@ recordRoutes.route("/getallmovies").get(async function(req, res) {
     res.status(500).json({message: 'Server error'});
   }
 
+});
+
+// USERCOLOR API ROUTE
+// grabs the value of the stored color
+// might require base case if not found
+recordRoutes.route("/usercolor").get(async function(req, response) {
+  let db_connect = dbo.getDb("movieknightdb");
+
+  let query = {_id:  req.body._id};
+
+  db_connect
+    .colletion("users")
+    .find(query)
+    .then((data) => {
+      console.log(data.color);
+      response.json(data.color);
+    });
+});
+
+// CHANGECOLOR API ROUTE
+// changes the stored color field in the given user
+recordRoutes.route("/usercolor/changecolor").put(async function(req, response) {
+  let db_connect = dbo.getDb("movieknightdb");
+
+  let query = {};
+  query._id= req.body._id;
+  query.color - req.body.color;
+
+  try
+  {
+    var userQuery = {_id: req.body._id};
+    const newColor = req.body.color;
+
+    console.log(req.body.color);
+
+    db_connect.collection('users').updateOne(userquery, color = newColor, function(err, res) {});
+    res.json({message:"Updated Color Scheme"});
+  }
+  // some kind of server error
+  catch (error)
+  {
+    console.log(error);
+    res.status(500).jscon({message: 'server error'});
+  }
 });
 
 
