@@ -120,35 +120,6 @@ recordRoutes.route("/delete/:username").delete((req, response) => {
 });
 
 
-// LOGIN API Route
-recordRoutes.route("/record/login").post(async function (req, res) 
-{
-  // Connect to MongoDB
-  let db_connect = dbo.getDb();
-  
-  try 
-  {
-    // Check "Users" to see if user + pass exists
-    const user =  await db_connect.collection('users').findOne({ username: req.body.username, password: req.body.password });
-
-    // Case: Does Exists
-    if(user) { res.json({ exists: "True", firstname: user.firstname, lastname: user.lastname, id: user._id}); }
-    
-    // Case: Does NOT Exist
-    else { res.json({ exists: "False" }); }
-  } 
-
-  // Some kind of Server Error
-  catch (error) 
-  {
-    console.log(error);
-    res.status(500).json({ message: 'Server error' });
-  }
-
-});
- 
-
-
 // SIGNUP API Route
 recordRoutes.route("/record/signup").post(function (req, response) {
  let db_connect = dbo.getDb();
@@ -243,7 +214,8 @@ recordRoutes.route("/signup").post(async function (req, res)
    password: req.body.password,   
    firstname: req.body.firstname,
    lastname: req.body.lastname,
-   email: req.body.email
+   email: req.body.email,
+   color : 0
   };
 
   try 
@@ -271,5 +243,27 @@ recordRoutes.route("/signup").post(async function (req, res)
   catch (error) { res.status(500).send({message:"Internal Server Error"}); }
 
 });
+
+// GETALLMOVIES api call
+recordRoutes.route("/getallmovies").get(async function(req, res) {
+  
+  let db_connect  = dbo.getDb("movieknightdb");
+
+  try
+  {
+    const movies = await db_connect.collection('masterlist').find({});
+
+    console.log(movies);
+    res.json(movies);
+  }
+  catch(error)
+  {
+    console.log(error);
+    res.status(500).json({message: 'Server error'});
+  }
+
+});
+
+
  
 module.exports = recordRoutes;
