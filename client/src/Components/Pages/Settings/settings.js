@@ -1,21 +1,12 @@
 import React, { useEffect } from 'react';
 
-<<<<<<< Updated upstream
-import './settngs.css';
-=======
 import './settings.css';
->>>>>>> Stashed changes
-
 import HomeBar from '../../../Components/navbar';
 import HomeCard from '../../../Components/homecard';
 import MainBar from '../../../Components/mainbar';
 import MainTab from '../../../Components/maintab';
 import SettingsBox from '../../../Components/settingsBox';
-<<<<<<< Updated upstream
-import Button from '../../../Components/colorButton';
-=======
 import ColorButton from '../../../Components/colorButton';
->>>>>>> Stashed changes
 import loadColor from '../../../Components/loadColor';
 
 import { Link, useNavigate } from 'react-router-dom';
@@ -25,8 +16,10 @@ import axios from "axios";
 // Import Toasts
 import { toast, ToastContainer } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
+import { createContext } from "react"; 
 
-// var addC, removeC, extendC, bgC, ebgC; 
+
+export const ThemeContext = createContext(null)
 
 // This is the Settings Page of the Web Site
 function Settings() {
@@ -57,7 +50,7 @@ function Settings() {
         catch (error) { console.log(error); }
     }
 
-    
+
 
     // This is the function that is ran when the page is loaded for the first time
     useEffect(() => {
@@ -66,33 +59,25 @@ function Settings() {
 
     }, []); // <-- empty array means 'run once'
 
+    // We need to add the API Call to grab the color right here
+    // const [theme, loadColor] = useState("light")
+
+    /* const toggleTheme = () => {
+        // We need an API Call here too     
+        loadColor(apiResult);
+    } */ 
 
     return (
+        //<ThemeContext.Provider value={{theme, toggleTheme}}>
+            <div className="Settings">
+                <MainBar />
+                <SettingsBox>
+                </SettingsBox>
+                <ToastContainer />
 
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
-        <div className="Settings">
-
-            <MainBar />
-            <SettingsBox>
-<<<<<<< Updated upstream
-                <Button left="30%" background-color="blue">
-                    Hello
-                </Button>
-
-=======
->>>>>>> Stashed changes
-            </SettingsBox>
-            <ToastContainer />
-
-        </div>
+            </div>
+        //</ThemeContext.Provider>
     );
 }
 
-<<<<<<< Updated upstream
-export default Main;
-=======
 export default Settings;
->>>>>>> Stashed changes
