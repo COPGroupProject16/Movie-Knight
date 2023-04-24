@@ -37,97 +37,6 @@ recordRoutes.route("/userlist").get(async function (req, res) {
   }
 });
 
-<<<<<<< Updated upstream
-// USERCOLOR API ROUTE
-// grabs the value of the stored color
-// might require base case if not found
-recordRoutes.route("/usercolor").get(async function(req, response) {
-  let db_connect = dbo.getDb("movieknightdb");
-
-  let query = {_id:  req.body._id};
-
-  db_connect
-    .colletion("users")
-    .find(query)
-    .then((data) => {
-      console.log(data.color);
-      response.json(data.color);
-    });
-});
-
-// CHANGECOLOR API ROUTE
-// changes the stored color field in the given user
-recordRoutes.route("/usercolor/changecolor").put(async function(req, response) {
-  let db_connect = dbo.getDb("movieknightdb");
-
-  let query = {};
-  query._id= req.body._id;
-  query.color - req.body.color;
-
-  try
-  {
-    var userQuery = {_id: req.body._id};
-    const newColor = req.body.color;
-
-    console.log(req.body.color);
-
-    db_connect.collection('users').updateOne(userquery, color = newColor, function(err, res) {});
-    res.json({message:"Updated Color Scheme"});
-  }
-  // some kind of server error
-  catch (error)
-  {
-    console.log(error);
-    res.status(500).jscon({message: 'server error'});
-  }
-});
-
-recordRoutes.route("/userlist/add").post(async function (req, res) {
-  // Connect to MongoDB
-  let db_connect = dbo.getDb("movieknightdb");
-    
-  try 
-  {
-   
-    const movie = await db_connect.collection('masterlist').findOne({ title: req.body.title});
-
-    var userQuery = { _id: req.body._id};
-
-    console.log(movie.title);
-
-    db_connect.collection('users').updateOne(userQuery,{ $push: { userlist: movie}}, function (err, res){ });
-    res.json({message:"Added to list."});
-  } 
-
-  // Some kind of Server Error
-  catch (error) 
-  {
-    console.log(error);
-    res.status(500).json({ message: 'Server error' });
-  }
-});
-
-
-// Deletes a movie from the logged in User's list
-recordRoutes.route("/delete/:username").delete((req, response) => {
-  let db_connect = dbo.getDb("movieknightdb");
-
-  let query = {};
-
-  query.ObjectId = req.params.ObjectId;
-  query.userID = parseInt(req.params.id)
-
-  db_connect
-    .collection("usermovies")
-    .deleteOne(query, function (err, obj) {
-    if (err) throw err;
-    console.log("1 movie deleted");
-    response.json(obj);
-  });
-});
-
-
-=======
 recordRoutes.route("/userlist/add").post(async function (req, res) {
   // Connect to MongoDB
   let db_connect = dbo.getDb("movieknightdb");
@@ -206,12 +115,13 @@ recordRoutes.route("/login").post(async function (req, res)
 
 });
 
->>>>>>> Stashed changes
 // SIGNUP API Route
 recordRoutes.route("/signup").post(async function (req, res) 
 {
   // Connect to MongoDB
   let db_connect = dbo.getDb();
+
+  let blankArray = [];
  
  // Input from the User
  let myobj =
@@ -221,7 +131,7 @@ recordRoutes.route("/signup").post(async function (req, res)
    firstname: req.body.firstname,
    lastname: req.body.lastname,
    email: req.body.email,
-   color: 0
+   movielist: blankArray
   };
 
   try 
@@ -256,62 +166,6 @@ recordRoutes.route("/auth").post(async function (req, res)
   const token = req.body.token;
   //console.log(token);
 
-<<<<<<< Updated upstream
- 
-
-//TESTING A NEW LOGIN ROUTE FORMAT (using JWT)
-recordRoutes.route("/record/newlogin",async (req, res) => {
-  try {
-    const{ error } = validate(req.body);
-    if (error)
-      return res.status(400).send({message:error.details[0].message});
-
-    const user = await User.findOne({username: req.body.username});
-    if(!user)
-      return res.status(401).send({message : "Invalid Username/Password Cobination"});
-
-    const validPassword = await bcrypt.compare(req.body.password,user.password);
-    if(!validPassword)
-      return res.status(401).send({message : "Invalid Username/Password Cobination"});
-
-   const token = user.generateAuthToken();
-   res.status(200).send({data:token,message : "Authentication successful"});   
-
-  } catch (error) {
-    res.status(500).send({message:"Internal Server Error"});
-  }
-});  
-
-// LOGIN API Route
-recordRoutes.route("/login").post(async function (req, res) 
-{
-  // Connect to MongoDB
-  let db_connect = dbo.getDb();
-
-
-  try 
-  {
-    // Check if username is already taken
-    const user = await db_connect.collection('users').findOne({username: req.body.username, password: req.body.password});
-
-    // Return 409 if username is taken
-    if (user) { return res.status(409).send({message:"Username is Already Taken"}); }
-
-    // Hash and update the password --> *** SALT == 10 ***
-
-    // Insert the new user data into the database
-    const user1 = await db_connect.collection("users").insertOne(myobj);
-    id = user1.insertedId;
-
-    // Send the user a valid JWT token with the userID
-    const token = jwt.sign({_id:id},process.env.JWTPRIVATEKEY,{expiresIn: "1h"});
-
-    // Return 200 if everything works out
-    res.status(200).send({data:token, message:"User Created successfully"});
-  } 
-  catch (error) { res.status(500).send({message:"Internal Server Error"}); }
-
-=======
   // check json web token exists & is verified
   if (token) 
   {
@@ -345,79 +199,102 @@ recordRoutes.route("/getAll").post(async function (req, res)
   let db_connect = dbo.getDb();
   
   data = await db_connect.collection('masterlist').find().toArray();
-  console.log(data);
+  //console.log(data);
 
   // check json web token exists & is verified
   if (data) { return res.status(200).send({message:"Data Retirved", data:data}); } 
 
   // Error: Redirect User Back to Home
   else { return res.status(500).send({message:"Internal Server Error, Try Again Later."}); }
->>>>>>> Stashed changes
 });
 
-// SIGNUP API Route
-recordRoutes.route("/signup").post(async function (req, res) 
+// GET USER MOVIES API Route
+recordRoutes.route("/getUserMovies").post(async function (req,res)
 {
+  req.body.userID = new ObjectId(req.body.userID);
+  //console.log(req.body.userID);
   // Connect to MongoDB
   let db_connect = dbo.getDb();
- 
- // Input from the User
- let myobj =
-  {
-   username: req.body.username,
-   password: req.body.password,   
-   firstname: req.body.firstname,
-   lastname: req.body.lastname,
-   email: req.body.email,
-   color : 0
-  };
 
-  try 
-  {
-    // Check if username is already taken
-    const user = await db_connect.collection('users').findOne({username: req.body.username});
+  const data = await db_connect.collection('users').findOne({_id: req.body.userID});
 
-    // Return 409 if username is taken
-    if (user) { return res.status(409).send({message:"Username is Already Taken"}); }
+  //console.log(data);
 
-    // Hash and update the password --> *** SALT == 10 ***
-    const hashPassword = await bcrypt.hash(req.body.password,10);
-    myobj.password = hashPassword;
+  // check json web token exists & is verified
+  if (data) { return res.status(200).send({message:"Data Retirved", data:data.movielist}); } 
 
-    // Insert the new user data into the database
-    const user1 = await db_connect.collection("users").insertOne(myobj);
-    id = user1.insertedId;
-
-    // Send the user a valid JWT token with the userID
-    const token = jwt.sign({_id:id},process.env.JWTPRIVATEKEY,{expiresIn: "1d"});
-
-    // Return 200 if everything works out
-    res.status(200).send({data:token, message:"User Created successfully"});
-  } 
-  catch (error) { res.status(500).send({message:"Internal Server Error"}); }
-
+  // Error: Redirect User Back to Home
+  else { return res.status(500).send({message:"Internal Server Error, Try Again Later."}); }
 });
 
-// GETALLMOVIES api call
-recordRoutes.route("/getallmovies").get(async function(req, res) {
+// ADD REVIEW API Route
+recordRoutes.route("/addReview").post(async function (req, res)
+{
+  req.body.movieID = new ObjectId(req.body.movieID);
+  req.body.userID = new ObjectId(req.body.userID);
+
+  // Verify that Rating is between 0 and 10 (inclusive)
+  const rating = parseInt(req.body.rating);
+  if(!(rating >= 0 && rating <= 10)) { return res.status(408).send({message:"Ratings must be between 0-10"}); }
+
+  // Connect to MongoDB
+  let db_connect = dbo.getDb();
+
+  // DO NOT uncomment this unless you know what you're doing
+  //const data = await db_connect.collection('masterlist').updateMany({}, { $set: {avgScore : 0} });
+  //const data = await db_connect.collection('masterlist').updateMany({}, { $set: {numReviews : 0} });
+  //const data = await db_connect.collection('masterlist').updateMany({}, { $set: {netScore : 0} });
+
+  // Check if a Review already exists
+  const dupCheck = await db_connect.collection('users').findOne({_id: req.body.userID});
+  const movielist = dupCheck.movielist;
+  var hasReview = false;
+  //console.log(req.body.movieID);
+  for (i = 0; i < movielist.length; i++) 
+  {
+    //console.log(movielist[i]._id);
+    if (movielist[i]._id.toString() === req.body.movieID.toString()) { hasReview = true; }
+  }
+  //console.log(hasReview);
+
+  //console.log(movielist);
   
-  let db_connect  = dbo.getDb("movieknightdb");
+  // const dupCheck = await db_connect.collection('users').findOne({ movielist: { $elemMatch: { _id: req.body.movieID } } });
 
-  try
+  // Case: Review Already Exists --> Return 409 Conflict
+  if(hasReview) 
   {
-    const movies = await db_connect.collection('masterlist').find({});
-
-    console.log(movies);
-    res.json(movies);
-  }
-  catch(error)
-  {
-    console.log(error);
-    res.status(500).json({message: 'Server error'});
+    //console.log("HERE");
+    // console.log(dupCheck);
+    // console.log(dupCheck.findOne({_id:req.body.movieID}));
+    return res.status(409).send({message:"Review Already Exists for this Movie"}); 
   }
 
+  // Otherwise, add the review to the movie
+
+  const data = await db_connect.collection('masterlist').findOne({_id:req.body.movieID});
+  // console.log("data:" + data);
+
+  // Grab Current Movie Values
+  var numRev = parseInt(data.numReviews) + 1;
+  var totalScore = parseInt(data.netScore) + parseInt(req.body.rating);
+
+  // Update the Ratings of the movie
+  var update = await db_connect.collection('masterlist').updateOne({_id:req.body.movieID},{$set:{numReviews:numRev}});
+  update = await db_connect.collection('masterlist').updateOne({_id:req.body.movieID},{$set:{netScore:totalScore}});
+  update = await db_connect.collection('masterlist').updateOne({_id:req.body.movieID},{$set:{avgScore:(parseFloat(totalScore) / parseFloat(numRev))}});
+
+  //console.log(data);
+  // console.log(req.body.userID);
+  data.rating = parseInt(req.body.rating);
+  const user = db_connect.collection('users').updateOne({_id:req.body.userID},{ $push: { movielist: data}}, function (err, res){ });
+
+  // check json web token exists & is verified
+  if (data) { return res.status(200).send({message:"Review Added", data:data}); } 
+
+  // Error: Redirect User Back to Home
+  else { return res.status(500).send({message:"Internal Server Error, Try Again Later."}); }
 });
 
 
- 
 module.exports = recordRoutes;

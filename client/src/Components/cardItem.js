@@ -13,6 +13,7 @@ import Card from 'react-bootstrap/Card';
 
 import {Link, useNavigate} from 'react-router-dom';
 import axios from "axios";
+import MovieModal from './moviemodal';
 
 import React, { useState, useEffect, useRef } from 'react';
 
@@ -25,36 +26,55 @@ function CardItem(props)
 {
   const [allMovies, setAllMovies] = useState([]);
   const allMoviesRef = useRef([]);
+  const navigate = useNavigate()
+  
 
   const getAllMovies = async(e) => 
   {
-    // Get JWT token (if it exists)
-    // const token =  { token: localStorage.getItem('token') }
-
-    // No Token --> Boot the User to Homepage
-    // if( token.token == null) { navigate('/home') }
-
     // JWT exists --> Authenticate Token
     try 
     {
-      // Send token to Express Server
-      const url = "http://192.241.132.66:5000/getAll";
-      await axios.post(url," ").
-      then(res=>
-      {
-        allMoviesRef.current = res.data.data;
-        setAllMovies(allMoviesRef.current);
+        // Get JWT token (if it exists)
+        const token =  { token: localStorage.getItem('token') }
 
-        console.log(res);
-        console.log(res.data.data);
-        // allMovies = res.data.data;
-        // console.log("allMovies: " + allMovies);
+        // No Token --> Boot the User to Homepage
+        if( token.token == null) { navigate('/home') } 
 
-      });
+
+        // Send token to Express Server
+        const url = "http://192.241.132.66:5000/auth";
+        await axios.post(url,token).
+        then(async res=>
+        {
+            // Case: Bad JWT --> Boot user back to the homepage
+            if (res.status != 200) { navigate("/home") }
+
+            try 
+            {
+              const json = { userID : res.data.data._id, } 
+
+              // Send token to Express Server
+              const url = "http://192.241.132.66:5000/" + props.type;
+              await axios.post(url,json).
+              then(res=>
+              {
+                allMoviesRef.current = res.data.data;
+                setAllMovies(allMoviesRef.current);
+        
+                // console.log(res);
+                // console.log(res.data.data);
+                // allMovies = res.data.data;
+                // console.log("allMovies: " + allMovies);
+        
+              });
+            } 
+            catch (error) { console.log(error); }
+        })
     } 
 
-
     catch (error) { console.log(error); }
+
+
   }
 
     // This is the function that is ran when the page is loaded for the first time
@@ -62,43 +82,83 @@ function CardItem(props)
     {
         getAllMovies();
         // console.log(allMovies);
-        allMoviesRef.current = allMovies.sort((a, b) => a.title.localeCompare(b.title));
-        setAllMovies(allMoviesRef.current);
+        // allMoviesRef.current = allMovies.sort((a, b) => a.title.localeCompare(b.title));
+        // setAllMovies(allMoviesRef.current);
         // console.log(allMovies);
   
     }, []); // <-- empty array means 'run once'
 
-    return (
-      <Row>
-          {allMovies.map((card, index) => (
-              <Card key = {index} style={{ width: '18rem' }}>
-              <Card.Img variant="top" src= {card.thumbnail} />
-              <Card.Body>
-          
-                <Card.Title>{card.title}</Card.Title>
-                
-                <Card.Text>
-                      Rating: {card.rating}
-                </Card.Text>
-          
-                <Card.Text>
-                  Genre: {card.genre.toString()}
-                </Card.Text>
-          
-                <Card.Text>
-                  Director: {card.director.toString()}
-                </Card.Text>
-          
-                <Card.Text>
-                  Year: {card.year}
-                </Card.Text>
-          
-                <Button variant="primary">Add Review</Button>
-                </Card.Body>
-              </Card>
-            ))}
-        </Row>
-    )
+    // Browse Movies Lists
+    if(props.type == "getAll")
+    {
+      return (
+        <Row>
+            {allMovies.map((card, index) => (
+                <Card key = {index} style={{ width: '18rem' }} id = {card._id}>
+                <Card.Img variant="top" src= {card.thumbnail} />
+                <Card.Body>
+            
+                  <Card.Title>{card.title}</Card.Title>
+                  
+                  <Card.Text>
+                        Rating: {card.rating}
+                  </Card.Text>
+            
+                  <Card.Text>
+                    Genre: {card.genre.toString()}
+                  </Card.Text>
+            
+                  <Card.Text>
+                    Director: {card.director.toString()}
+                  </Card.Text>
+            
+                  <Card.Text>
+                    Year: {card.year}
+                  </Card.Text>
+            
+                  <Button variant="primary"><MovieModal type = "browse" title = {card.title} genre = {card.genre.toString()} director = {card.director.toString()} year = {card.year} id = {card._id} /></Button>
+                  </Card.Body>
+                </Card>
+              ))}
+          </Row>
+      )
+    }
+
+    if(props.type == "getUserMovies")
+    {
+      return (
+        <Row>
+            {allMovies.map((card, index) => (
+                <Card key = {index} style={{ width: '18rem' }} id = {card._id}>
+                <Card.Img variant="top" src= {card.thumbnail} />
+                <Card.Body>
+            
+                  <Card.Title>{card.title}</Card.Title>
+                  
+                  <Card.Text>
+                    My Rating: {card.rating}
+                  </Card.Text>
+            
+                  <Card.Text>
+                    Genre: {card.genre.toString()}
+                  </Card.Text>
+            
+                  <Card.Text>
+                    Director: {card.director.toString()}
+                  </Card.Text>
+            
+                  <Card.Text>
+                    Year: {card.year}
+                  </Card.Text>
+            
+                  <Button variant="primary"><MovieModal type = "myReviews" title = {card.title} genre = {card.genre.toString()} director = {card.director.toString()} year = {card.year} id = {card._id} /></Button>
+                  </Card.Body>
+                </Card>
+              ))}
+          </Row>
+      )
+    }
+
 }
 
 export default CardItem;

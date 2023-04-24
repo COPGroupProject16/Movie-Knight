@@ -63,7 +63,6 @@ function Main()
 
       <MainBar/>
       <MainTab/>
-      <p>THIS IS THE Main PAGE</p>
       <ToastContainer/>
       
     </div>
