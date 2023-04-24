@@ -49,7 +49,7 @@ p {
     left: 15%;
     border-radius: 35px;
     box-sizing: border-box;
-    background-color: rgba(217, 217, 217, 1);
+    background-color: #FAF9F6;
 }
 
 .light {
@@ -76,14 +76,14 @@ p {
     right: 15%;
     border-radius: 35px;
     box-sizing: border-box;
-    background-color: rgba(217, 217, 217, 1);
+    background-color: #36454F;
 }
 
 .dark {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    color: rgba(0, 0, 0, 1);
+    color: #FFF;
     font-size: 24px;
     font-family: Inter, sans-serif;
     font-weight: 400;
@@ -109,14 +109,14 @@ p {
     left: 15%;
     border-radius: 35px;
     box-sizing: border-box;
-    background-color: rgba(217, 217, 217, 1);
+    background-color: #FAF9F6;
 }
 
 .colorblind-light {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    color: rgba(0, 0, 0, 1);
+    color: #000;
     font-size: 24px;
     font-family: Inter, sans-serif;
     font-weight: 400;
@@ -136,14 +136,14 @@ p {
     right: 15%;
     border-radius: 35px;
     box-sizing: border-box;
-    background-color: rgba(217, 217, 217, 1);
+    background-color: #36454F;
 }
 
 .colorblind-dark {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    color: rgba(0, 0, 0, 1);
+    color: #FFF;
     font-size: 24px;
     font-family: Inter, sans-serif;
     font-weight: 400;
@@ -163,3 +163,20 @@ p {
     box-sizing: border-box;
     position: absolute;
 }
+
+#light .settingsBox {
+    background-color: #404040;
+}
+
+#lightColorBlind .settingsBox {
+    background-color: #404040;
+}
+
+#dark .settingsBox {
+    background-color: #feffec;
+}
+
+#darkColorBlind .settingsBox {
+    background-color: #feffec;
+}
+
