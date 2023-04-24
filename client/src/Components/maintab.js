@@ -17,16 +17,6 @@ import ReactDOM from 'react-dom/client';
 import {Link, useNavigate} from 'react-router-dom';
 import axios from "axios";
 
-const loadAll = () =>
-{
-  const container = document.getElementById('grid');
-  const root = ReactDOM.createRoot(container);
-  const data = 3;
-  root.render();
-  
-
-};
-
 function MainTab() {
   return (
     <Tabs
@@ -37,15 +27,17 @@ function MainTab() {
     fill
     >
       {/* Browse Movies Tab */}
-      <Tab eventKey="login" title="Browse Movies">
+      <Tab eventKey="login" title="Browse Movies" id = '1'>
         <Col>
-          <CardItem></CardItem>
+          <CardItem type = 'getAll'></CardItem>
         </Col>
       </Tab>
 
       {/* My Reviews Tab */}
       <Tab eventKey="signup" title="My Reviews">
-              <p>MY REVIEWS TEST</p>
+        <Col>
+          <CardItem type = 'getUserMovies' id = '1'></CardItem>
+        </Col>
       </Tab>
     </Tabs>
   );

@@ -1,11 +1,6 @@
 import React from "react"
 import "./styles.css"
 
-<<<<<<< Updated upstream
-export default function SettingsBox() {
-    return <div className="SettingsBox" />
-}
-=======
 export default function Settingsbox() {
     return (
         <div className="settingsbox">
@@ -30,4 +25,3 @@ export default function Settingsbox() {
         </div>
     )
 }
->>>>>>> Stashed changes

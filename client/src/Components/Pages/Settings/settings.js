@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 
 import './settings.css';
+
 import HomeBar from '../../../Components/navbar';
 import HomeCard from '../../../Components/homecard';
 import MainBar from '../../../Components/mainbar';
@@ -16,10 +17,8 @@ import axios from "axios";
 // Import Toasts
 import { toast, ToastContainer } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
-import { createContext } from "react"; 
 
-
-export const ThemeContext = createContext(null)
+// var addC, removeC, extendC, bgC, ebgC; 
 
 // This is the Settings Page of the Web Site
 function Settings() {
@@ -50,7 +49,7 @@ function Settings() {
         catch (error) { console.log(error); }
     }
 
-
+    
 
     // This is the function that is ran when the page is loaded for the first time
     useEffect(() => {
@@ -59,24 +58,18 @@ function Settings() {
 
     }, []); // <-- empty array means 'run once'
 
-    // We need to add the API Call to grab the color right here
-    // const [theme, loadColor] = useState("light")
-
-    /* const toggleTheme = () => {
-        // We need an API Call here too     
-        loadColor(apiResult);
-    } */ 
 
     return (
-        //<ThemeContext.Provider value={{theme, toggleTheme}}>
-            <div className="Settings">
-                <MainBar />
-                <SettingsBox>
-                </SettingsBox>
-                <ToastContainer />
 
-            </div>
-        //</ThemeContext.Provider>
+
+        <div className="Settings">
+
+            <MainBar />
+            <SettingsBox>
+            </SettingsBox>
+            <ToastContainer />
+
+        </div>
     );
 }
 
