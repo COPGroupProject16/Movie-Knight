@@ -296,5 +296,62 @@ recordRoutes.route("/addReview").post(async function (req, res)
   else { return res.status(500).send({message:"Internal Server Error, Try Again Later."}); }
 });
 
+// DELETE REVIEW REVIEW API Route
+recordRoutes.route("/deleteReview").post(async function (req, res)
+{
+  // Format The Input Parameters
+  req.body.movieID = new ObjectId(req.body.movieID);
+  req.body.userID = new ObjectId(req.body.userID);
+
+  // Verify that Rating is between 0 and 10 (inclusive)
+  const rating = parseInt(req.body.rating);
+  if(!(rating >= 0 && rating <= 10)) { return res.status(408).send({message:"Ratings must be between 0-10"}); }
+
+  // Connect to MongoDB
+  let db_connect = dbo.getDb();
+
+  // Check if a Review already exists
+  const dupCheck = await db_connect.collection('users').findOne({_id: req.body.userID});
+  const movielist = dupCheck.movielist;
+  var hasReview = false;
+  for (i = 0; i < movielist.length; i++) { if (movielist[i]._id.toString() === req.body.movieID.toString()) { hasReview = true; } }
+
+  // Case: Review does not Exist --> Return 409 Conflict
+  if(hasReview == false) { return res.status(409).send({message:"Review Does Not Exist"}); }
+
+  // Otherwise, remove the review
+  const data = await db_connect.collection('masterlist').findOne({_id:req.body.movieID});
+
+  // Grab Current Movie Values
+  var numRev = parseInt(data.numReviews) - 1 ;
+  var totalScore = parseInt(data.netScore) - parseInt(req.body.rating);
+
+  // Case: Now we have 0 Reviews (set all values to 0)
+  if (numRev == 0)
+  {
+    var update = await db_connect.collection('masterlist').updateOne({_id:req.body.movieID},{$set:{numReviews:0}});
+    update = await db_connect.collection('masterlist').updateOne({_id:req.body.movieID},{$set:{netScore:0}});
+    update = await db_connect.collection('masterlist').updateOne({_id:req.body.movieID},{$set:{avgScore:0}});
+  }
+  else
+  {
+    // Update the Ratings of the movie
+    var update = await db_connect.collection('masterlist').updateOne({_id:req.body.movieID},{$set:{numReviews:numRev}});
+    update = await db_connect.collection('masterlist').updateOne({_id:req.body.movieID},{$set:{netScore:totalScore}});
+    update = await db_connect.collection('masterlist').updateOne({_id:req.body.movieID},{$set:{avgScore:(parseFloat(totalScore) / parseFloat(numRev))}});
+  }
+
+  //console.log(data);
+  // console.log(req.body.userID);
+  data.rating = parseInt(req.body.rating);
+  const user = db_connect.collection('users').updateOne({_id:req.body.userID},{ $pull: { movielist: {_id: req.body.movieID}}}, function (err, res){ });
+
+  // check json web token exists & is verified
+  if (data) { return res.status(200).send({message:"Review Deleted", data:data}); } 
+
+  // Error: Redirect User Back to Home
+  else { return res.status(500).send({message:"Internal Server Error, Try Again Later."}); }
+});
+
 
 module.exports = recordRoutes;

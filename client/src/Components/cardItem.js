@@ -100,9 +100,9 @@ function CardItem(props)
             
                   <Card.Title>{card.title}</Card.Title>
                   
-                  <Card.Text>
-                        Rating: {card.rating}
-                  </Card.Text>
+                  <Card.Title>
+                    Rating: {card.numReviews == 0 ? "N/A" : parseFloat(card.avgScore).toFixed(1)} 
+                  </Card.Title>
             
                   <Card.Text>
                     Genre: {card.genre.toString()}
@@ -135,9 +135,9 @@ function CardItem(props)
             
                   <Card.Title>{card.title}</Card.Title>
                   
-                  <Card.Text>
+                  <Card.Title>
                     My Rating: {card.rating}
-                  </Card.Text>
+                  </Card.Title>
             
                   <Card.Text>
                     Genre: {card.genre.toString()}
@@ -151,7 +151,7 @@ function CardItem(props)
                     Year: {card.year}
                   </Card.Text>
             
-                  <Button variant="primary"><MovieModal type = "myReviews" title = {card.title} genre = {card.genre.toString()} director = {card.director.toString()} year = {card.year} id = {card._id} /></Button>
+                  <Button variant="primary"><MovieModal type = "myReviews" rating = {card.rating} title = {card.title} genre = {card.genre.toString()} director = {card.director.toString()} year = {card.year} id = {card._id} /></Button>
                   </Card.Body>
                 </Card>
               ))}
