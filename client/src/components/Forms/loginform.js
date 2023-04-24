@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { setCookie, useCookies } from 'react-cookie';
 
 // Import Bootstrap
 import Form from "react-bootstrap/Form";
@@ -47,6 +46,8 @@ function LoginForm()
 
 		//  JSON to be passed to Express Server
 
+		console.log(data);
+
 		try 
 		{
 			const url = "http://192.241.132.66:5000/login";
@@ -75,6 +76,7 @@ function LoginForm()
 				default:
 					break;
 			}
+			document.getElementById("password").value = "";
 		}	
 	}
 
@@ -102,7 +104,7 @@ function LoginForm()
 	return (
 
 		// The Login Form
-		<Form>
+		<Form id = "loginform" onSubmit = {handleSubmit}>
 
 			{/* Username Part */}
 			<Form.Group className="mb-3" controlId="formBasicUsername" name ="formBasicUsername">
@@ -126,7 +128,7 @@ function LoginForm()
 				<div className="input-group">
 					
 					{/* Password Input Field */}
-					<input
+					<input id = "password"
 					type={passwordType}
 					onChange={handleChange}
 					value={data.password}
@@ -167,7 +169,7 @@ function LoginForm()
 			</Form.Group>
 
 			{/* The Login Button */}
-			<Button variant="primary" type="submit" onClick = {handleSubmit}>
+			<Button variant="primary" type = "submit">
 				Login
 			</Button>
           	<ToastContainer />

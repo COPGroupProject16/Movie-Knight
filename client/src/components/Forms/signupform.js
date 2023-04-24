@@ -11,6 +11,7 @@ import Button from 'react-bootstrap/Button';
 import {Link, useNavigate} from 'react-router-dom';
 
 import axios from "axios";
+import { FormControl } from 'react-bootstrap';
 
 function SignupForm() {
 	
@@ -105,12 +106,10 @@ function SignupForm() {
 	}
 	
 	return (
-        <Form>
+        <Form onSubmit = {handleSubmit} id = 'signupform'>
           <Form.Group className="mb-3" controlId="formBasicFname">
             <Form.Label className="text-center"> First Name </Form.Label>
-            <Form.Control 
-			type="text" value = {data.firstname} name = "firstname" placeholder="Enter First Name" onChange = {handleChange} required/>
-			<Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+            <Form.Control type="text" required value = {data.firstname} name = "firstname" placeholder="Enter First Name" onChange = {handleChange}></Form.Control>
           </Form.Group>
 
 
@@ -221,10 +220,8 @@ function SignupForm() {
 				)}
 				</button>
 		    </div>
-
-			<br></br>
-			{error && <div>{error}</div>}
-			<Button variant="primary" type="submit" onClick = {handleSubmit}>
+			
+			<Button variant="primary" type = "submit">
 				Sign Up
 			</Button>
 
