@@ -164,19 +164,19 @@ p {
     position: absolute;
 }
 
-#light .SettingsBox {
+#light .settingsBox {
     background-color: #404040;
 }
 
-#lightColorBlind .ColorButton {
+#lightColorBlind .settingsBox {
     background-color: #404040;
 }
 
-#dark .ColorButton {
+#dark .settingsBox {
     background-color: #feffec;
 }
 
-#darkColorBlind .ColorButton {
+#darkColorBlind .settingsBox {
     background-color: #feffec;
 }
 
