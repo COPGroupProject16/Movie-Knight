@@ -353,5 +353,49 @@ recordRoutes.route("/deleteReview").post(async function (req, res)
   else { return res.status(500).send({message:"Internal Server Error, Try Again Later."}); }
 });
 
+// USERCOLOR API ROUTE
+// grabs the value of the stored color
+// might require base case if not found
+recordRoutes.route("/usercolor").get(async function(req, response) {
+  let db_connect = dbo.getDb("movieknightdb");
+
+  let query = {_id:  req.body._id};
+
+  db_connect
+    .colletion("users")
+    .find(query)
+    .then((data) => {
+      console.log(data.color);
+      response.json(data.color);
+    });
+});
+
+// CHANGECOLOR API ROUTE
+// changes the stored color field in the given user
+recordRoutes.route("/usercolor/changecolor").put(async function(req, response) {
+  let db_connect = dbo.getDb("movieknightdb");
+
+  let query = {};
+  query._id= req.body._id;
+  query.color - req.body.color;
+
+  try
+  {
+    var userQuery = {_id: req.body._id};
+    const newColor = req.body.color;
+
+    console.log(req.body.color);
+
+    db_connect.collection('users').updateOne(userquery, color = newColor, function(err, res) {});
+    res.json({message:"Updated Color Scheme"});
+  }
+  // some kind of server error
+  catch (error)
+  {
+    console.log(error);
+    res.status(500).jscon({message: 'server error'});
+  }
+});
+
 
 module.exports = recordRoutes;
