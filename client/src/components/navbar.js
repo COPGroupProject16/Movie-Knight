@@ -3,28 +3,36 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
 
 import Container from 'react-bootstrap/Container';
-import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import AboutModal from './/aboutmodal';
+import {Nav,NavBtn,NavBtnLink} from './NavbarElements'
 
 function HomeBar() {
   return (
     <Navbar bg="light" expand="lg">
-      <Container>
+      <Container className = 'text-align-center'>
 
-        <img src={logo} width = "40px" height = "40px" className="HeaderLogo" alt="logo" />
+        <img src={logo} width = "132px" height = "75px" className="HeaderLogo" alt="logo" />
         
-        <Navbar.Brand href="#"><h2> Movie Knight</h2></Navbar.Brand>
+        <Navbar.Brand className = "ms-5 ps-5" href="/home"><h2> Movie Knight</h2></Navbar.Brand>
         
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
 
         <Nav>
 
-          {/* Homepage Link */}
+          {/* Homepage Link
           <Navbar.Brand href="/home">Home</Navbar.Brand>
 
-          {/* About Modal */}
-          <Navbar.Brand> <AboutModal/> </Navbar.Brand>
+          {/* About Modal 
+          <Navbar.Brand> <AboutModal/> </Navbar.Brand> */}
+
+          <NavBtn>
+            <NavBtnLink className = "m-0" to = '/login'>Login</NavBtnLink>
+          </NavBtn>
+
+          <NavBtn>
+            <NavBtnLink><AboutModal></AboutModal></NavBtnLink>
+          </NavBtn>
 
         </Nav>
 

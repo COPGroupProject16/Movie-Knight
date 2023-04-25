@@ -1,18 +1,13 @@
-import HomeBar from '../../../Components/navbar';  
-import HomeCard from '../../../Components/homecard';  
-import Layout from '../../../layout';  
-//import './App.css';
+import HomePage from '../../../Components/homepage';
+import './home.css';
 
 // This is the Homepage of the Web Site
-function Home() {
-    return (
+function Home() 
+{
   
-      <div className="Home">
-        <p>THIS IS THE HOME PAGE</p>
-        <Layout/>
-      </div>
+  return ( 
+      <HomePage/>
+  );
+}
 
-    );
-  }
-  
-  export default Home;
+export default Home;

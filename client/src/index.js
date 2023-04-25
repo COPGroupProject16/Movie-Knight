@@ -1,7 +1,6 @@
 // This is used for routing to other webpages
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { CookiesProvider } from "react-cookie";
 
 // This are the components for the other webpages
 import Home from "./Components/Pages/Home/home";
@@ -18,7 +17,6 @@ import Settings from "./Components/Pages/Settings/settings";
 // This is what is rendered at the very beginning of runtime 
 export default function App() {
   return (
-    <CookiesProvider>
       <BrowserRouter>
         <Routes>
           {/* This Line adds element to ALL Routes */}
@@ -38,7 +36,6 @@ export default function App() {
           
         </Routes>
       </BrowserRouter>
-    </CookiesProvider>
   );
 }
 

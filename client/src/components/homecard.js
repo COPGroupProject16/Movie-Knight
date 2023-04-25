@@ -1,18 +1,19 @@
 import { Col, Button, Row, Container, Card, Form } from "react-bootstrap";
+
+import HomeBar from './/navbar';
 import HomeTab from './/hometab';
 
 function HomeCard() 
 {
   return (
-    <div>
+    <div className="vh-100">
       <Container>
-        <Row className="vh-100 d-flex justify-content-center align-items-center">
+        <Row className="mt-5 justify-content-center align-items-center">
           <Col md={8} lg={6} xs={12}>
-            <div className="border border-3 border-primary"></div>
-            <Card className="shadow">
+            <Card className="square shadow rounded-bottom">
+            <div className="border border-5 border-primary rounded-top"></div>
               <Card.Body>
                 <div className="mb-3 mt-md-4">
-                  <h2 className="fw-bold mb-2 text-uppercase ">Movie Knight</h2>
                   <HomeTab/>
                   <div className="mb-3">
                   </div>
