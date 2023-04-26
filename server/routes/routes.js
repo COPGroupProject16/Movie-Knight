@@ -17,26 +17,8 @@ const ObjectId = require("mongodb").ObjectId;
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
  
- 
-// Gets the Userlist associated with the logged in User
-recordRoutes.route("/userlist").get(async function (req, res) {
-  let db_connect = dbo.getDb("movieknightdb");
 
-  try
-  {
-    const user = await db_connect.collection('users').findOne({ _id: req.body._id});
-
-    console.log(user);
-    res.json(user);
-  }
-  
-  catch(error)
-  {
-    console.log(error);
-    res.status(500).json({ message: 'Server error' });
-  }
-});
-
+// Adds a movie to the users list
 recordRoutes.route("/userlist/add").post(async function (req, res) {
   // Connect to MongoDB
   let db_connect = dbo.getDb("movieknightdb");
@@ -62,31 +44,11 @@ recordRoutes.route("/userlist/add").post(async function (req, res) {
   }
 });
 
-
-// Deletes a movie from the logged in User's list
-recordRoutes.route("/delete/:username").delete((req, response) => {
-  let db_connect = dbo.getDb("movieknightdb");
-
-  let query = {};
-
-  query.ObjectId = req.params.ObjectId;
-  query.userID = parseInt(req.params.id)
-
-  db_connect
-    .collection("usermovies")
-    .deleteOne(query, function (err, obj) {
-    if (err) throw err;
-    console.log("1 movie deleted");
-    response.json(obj);
-  });
-});
-
 // LOGIN API Route
 recordRoutes.route("/login").post(async function (req, res) 
 {
   // Connect to MongoDB
   let db_connect = dbo.getDb();
-  console.log(req.body);
 
   try 
   {
@@ -132,8 +94,7 @@ recordRoutes.route("/signup").post(async function (req, res)
    firstname: req.body.firstname,
    lastname: req.body.lastname,
    email: req.body.email,
-   movielist: blankArray,
-   color: 0
+   movielist: blankArray
   };
 
   try 
@@ -199,12 +160,12 @@ recordRoutes.route("/getAll").post(async function (req, res)
 {
   // Connect to MongoDB
   let db_connect = dbo.getDb();
-
+  
   data = await db_connect.collection('masterlist').find().toArray();
   //console.log(data);
 
   // check json web token exists & is verified
-  if (data) { return res.status(200).send({message:"Data Retirved", data:data.sort((a, b) => (a.title > b.title) ? 1 : -1)}); } 
+  if (data) { return res.status(200).send({message:"Data Retirved", data:data}); } 
 
   // Error: Redirect User Back to Home
   else { return res.status(500).send({message:"Internal Server Error, Try Again Later."}); }
@@ -218,15 +179,12 @@ recordRoutes.route("/getUserMovies").post(async function (req,res)
   // Connect to MongoDB
   let db_connect = dbo.getDb();
 
-  var data = await db_connect.collection('users').findOne({_id: req.body.userID});
+  const data = await db_connect.collection('users').findOne({_id: req.body.userID});
+
   //console.log(data);
 
   // check json web token exists & is verified
-  if (data) 
-  {
-    data = data.movielist;
-    return res.status(200).send({message:"Data Retrived", data:data.sort((a, b) => (a.title > b.title) ? 1 : -1)}); 
-  } 
+  if (data) { return res.status(200).send({message:"Data Retirved", data:data.movielist}); } 
 
   // Error: Redirect User Back to Home
   else { return res.status(500).send({message:"Internal Server Error, Try Again Later."}); }
@@ -299,142 +257,6 @@ recordRoutes.route("/addReview").post(async function (req, res)
 
   // Error: Redirect User Back to Home
   else { return res.status(500).send({message:"Internal Server Error, Try Again Later."}); }
-});
-
-// DELETE REVIEW REVIEW API Route
-recordRoutes.route("/deleteReview").post(async function (req, res)
-{
-  // Format The Input Parameters
-  req.body.movieID = new ObjectId(req.body.movieID);
-  req.body.userID = new ObjectId(req.body.userID);
-
-  // Verify that Rating is between 0 and 10 (inclusive)
-  const rating = parseInt(req.body.rating);
-  if(!(rating >= 0 && rating <= 10)) { return res.status(408).send({message:"Ratings must be between 0-10"}); }
-
-  // Connect to MongoDB
-  let db_connect = dbo.getDb();
-
-  // Check if a Review already exists
-  const dupCheck = await db_connect.collection('users').findOne({_id: req.body.userID});
-  const movielist = dupCheck.movielist;
-  var hasReview = false;
-  for (i = 0; i < movielist.length; i++) { if (movielist[i]._id.toString() === req.body.movieID.toString()) { hasReview = true; } }
-
-  // Case: Review does not Exist --> Return 409 Conflict
-  if(hasReview == false) { return res.status(409).send({message:"Review Does Not Exist"}); }
-
-  // Otherwise, remove the review
-  const data = await db_connect.collection('masterlist').findOne({_id:req.body.movieID});
-
-  // Grab Current Movie Values
-  var numRev = parseInt(data.numReviews) - 1 ;
-  var totalScore = parseInt(data.netScore) - parseInt(req.body.rating);
-
-  // Case: Now we have 0 Reviews (set all values to 0)
-  if (numRev == 0)
-  {
-    var update = await db_connect.collection('masterlist').updateOne({_id:req.body.movieID},{$set:{numReviews:0}});
-    update = await db_connect.collection('masterlist').updateOne({_id:req.body.movieID},{$set:{netScore:0}});
-    update = await db_connect.collection('masterlist').updateOne({_id:req.body.movieID},{$set:{avgScore:0}});
-  }
-  else
-  {
-    // Update the Ratings of the movie
-    var update = await db_connect.collection('masterlist').updateOne({_id:req.body.movieID},{$set:{numReviews:numRev}});
-    update = await db_connect.collection('masterlist').updateOne({_id:req.body.movieID},{$set:{netScore:totalScore}});
-    update = await db_connect.collection('masterlist').updateOne({_id:req.body.movieID},{$set:{avgScore:(parseFloat(totalScore) / parseFloat(numRev))}});
-  }
-
-  //console.log(data);
-  // console.log(req.body.userID);
-  data.rating = parseInt(req.body.rating);
-  const user = db_connect.collection('users').updateOne({_id:req.body.userID},{ $pull: { movielist: {_id: req.body.movieID}}}, function (err, res){ });
-
-  // check json web token exists & is verified
-  if (data) { return res.status(200).send({message:"Review Deleted", data:data}); } 
-
-  // Error: Redirect User Back to Home
-  else { return res.status(500).send({message:"Internal Server Error, Try Again Later."}); }
-});
-
-// USERCOLOR API ROUTE
-// grabs the value of the stored color
-// might require base case if not found
-<<<<<<< Updated upstream
-recordRoutes.route("/usercolor").get(async function(req, response) {
-  let db_connect = dbo.getDb("movieknightdb");
-
-  let query = {_id:  req.body._id};
-
-  db_connect
-    .colletion("users")
-    .find(query)
-    .then((data) => {
-      console.log(data.color);
-      response.json(data.color);
-    });
-=======
-recordRoutes.route("/usercolor").post(async function(req, res) 
-{
-  req.body.userID = new ObjectId(req.body.userID);
-
-  let db_connect = dbo.getDb("movieknightdb");
-
-  var data = db_connect.collection("users").findOne({_id:req.body.userID});
-
-  if (data) { return res.status(200).send({message:"UserColor", data:data.username}); } 
-
-  // Error: Redirect User Back to Home
-  else { return res.status(500).send({message:"Internal Server Error, Try Again Later."}); }
->>>>>>> Stashed changes
-});
-
-// CHANGECOLOR API ROUTE
-// changes the stored color field in the given user
-<<<<<<< Updated upstream
-recordRoutes.route("/usercolor/changecolor").put(async function(req, response) {
-  let db_connect = dbo.getDb("movieknightdb");
-
-  let query = {};
-  query._id= req.body._id;
-  query.color - req.body.color;
-
-  try
-  {
-    var userQuery = {_id: req.body._id};
-    const newColor = req.body.color;
-
-    console.log(req.body.color);
-
-    db_connect.collection('users').updateOne(userquery, color = newColor, function(err, res) {});
-    res.json({message:"Updated Color Scheme"});
-=======
-recordRoutes.route("/usercolor/changecolor").post(async function(req, res) 
-{
-  req.body.userID = new ObjectId(req.body.userID);
-  let db_connect = dbo.getDb("movieknightdb");
-
-  try
-  {
-    const newColor = parseInt(req.body.color);
-
-    //console.log(req.body.color);
-
-    var data = db_connect.collection('users').updateOne({_id:req.body.userID}, color = newColor, function(err, res) {});
-
-    if (data) { return res.status(200).send({message:"Updated Color Scheme", data:data.color}); } 
-
-    // Error: Redirect User Back to Home
-    else { return res.status(500).send({message:"Internal Server Error, Try Again Later."}); }
->>>>>>> Stashed changes
-  }
-  // some kind of server error
-  catch (error)
-  {
-    console.log(error);
-    res.status(500).jscon({message: 'server error'});
-  }
 });
 
 
