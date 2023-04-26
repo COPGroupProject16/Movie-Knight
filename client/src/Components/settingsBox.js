@@ -6,22 +6,26 @@ export default function Settingsbox() {
         <div className="settingsbox">
             <div className="group-262">
                 <div className="group-394">
-                    <div className="lightbox">
+                    <button className="lightbox" onClick={() => { colorChange(0) }}>
                         <p className="light">Light</p>
-                    </div>
-                    <div className="darkbox">
+                    </button>
+                    <button className="darkbox" onClick={() => { colorChange(1) }}>
                         <p className="dark">Dark</p>
-                    </div>
+                    </button>
                 </div>
                 <div className="group-290">
-                    <div className="cblightbox">
+                    <button className="cblightbox" onClick={() => { colorChange(2) }}>
                         <p className="colorblind-light">Colorblind Light</p>
-                    </div>
-                    <div className="cbdarkbox">
+                    </button>
+                    <button className="cbdarkbox" onClick={() => { colorChange(3) }}>
                         <p className="colorblind-dark">Colorblind Dark</p>
-                    </div>
+                    </button>
                 </div>
             </div>
         </div>
     )
+}
+
+function colorChange(palette) {
+    window.location.reload();
 }

@@ -1,26 +1,11 @@
-import Tab from 'react-bootstrap/Tab';
-import Tabs from 'react-bootstrap/Tabs';
-import LoginForm from './Forms/loginform';
-import SignupForm from './Forms/signupform';
-// import React, { useEffect, useState } from 'react';
-import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
-
 import {Link, useNavigate} from 'react-router-dom';
 import axios from "axios";
 import MovieModal from './moviemodal';
 
 import React, { useState, useEffect, useRef } from 'react';
-
-
-
-
-// var allMovies = [{test:'testA'},{test:'testB'},{test:'testC'},{test:'testD'}]; 
 
 function CardItem(props) 
 {
@@ -84,8 +69,9 @@ function CardItem(props)
         const json = { userID : "abcde", } 
 
         // Send token to Express Server
+        // var url = window.location.host;
+        // console.log(url);
         const url = "http://192.241.132.66:5000/getAll";
-        console.log("HERE __A!");
         await axios.post(url,json).
         then(res=>
         {
@@ -109,19 +95,9 @@ function CardItem(props)
     // This is the function that is ran when the page is loaded for the first time
     useEffect(() => 
     {
-      if(props.type == 'homepage')
-      {
-        console.log("Here B!");
-        getHomeMovies();
-      }
-      else
-      {
-        getAllMovies();
-      }
-        // console.log(allMovies);
-        // allMoviesRef.current = allMovies.sort((a, b) => a.title.localeCompare(b.title));
-        // setAllMovies(allMoviesRef.current);
-        // console.log(allMovies);
+      if(props.type == 'homepage') { getHomeMovies(); }
+
+      else { getAllMovies(); }
   
     }, []); // <-- empty array means 'run once'
 

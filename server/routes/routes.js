@@ -86,6 +86,7 @@ recordRoutes.route("/login").post(async function (req, res)
 {
   // Connect to MongoDB
   let db_connect = dbo.getDb();
+  console.log(req.body);
 
   try 
   {
@@ -131,7 +132,8 @@ recordRoutes.route("/signup").post(async function (req, res)
    firstname: req.body.firstname,
    lastname: req.body.lastname,
    email: req.body.email,
-   movielist: blankArray
+   movielist: blankArray,
+   color: 0
   };
 
   try 
@@ -197,12 +199,12 @@ recordRoutes.route("/getAll").post(async function (req, res)
 {
   // Connect to MongoDB
   let db_connect = dbo.getDb();
-  
+
   data = await db_connect.collection('masterlist').find().toArray();
   //console.log(data);
 
   // check json web token exists & is verified
-  if (data) { return res.status(200).send({message:"Data Retirved", data:data}); } 
+  if (data) { return res.status(200).send({message:"Data Retirved", data:data.sort((a, b) => (a.title > b.title) ? 1 : -1)}); } 
 
   // Error: Redirect User Back to Home
   else { return res.status(500).send({message:"Internal Server Error, Try Again Later."}); }
@@ -216,12 +218,15 @@ recordRoutes.route("/getUserMovies").post(async function (req,res)
   // Connect to MongoDB
   let db_connect = dbo.getDb();
 
-  const data = await db_connect.collection('users').findOne({_id: req.body.userID});
-
+  var data = await db_connect.collection('users').findOne({_id: req.body.userID});
   //console.log(data);
 
   // check json web token exists & is verified
-  if (data) { return res.status(200).send({message:"Data Retirved", data:data.movielist}); } 
+  if (data) 
+  {
+    data = data.movielist;
+    return res.status(200).send({message:"Data Retrived", data:data.sort((a, b) => (a.title > b.title) ? 1 : -1)}); 
+  } 
 
   // Error: Redirect User Back to Home
   else { return res.status(500).send({message:"Internal Server Error, Try Again Later."}); }
@@ -356,6 +361,7 @@ recordRoutes.route("/deleteReview").post(async function (req, res)
 // USERCOLOR API ROUTE
 // grabs the value of the stored color
 // might require base case if not found
+<<<<<<< Updated upstream
 recordRoutes.route("/usercolor").get(async function(req, response) {
   let db_connect = dbo.getDb("movieknightdb");
 
@@ -368,10 +374,25 @@ recordRoutes.route("/usercolor").get(async function(req, response) {
       console.log(data.color);
       response.json(data.color);
     });
+=======
+recordRoutes.route("/usercolor").post(async function(req, res) 
+{
+  req.body.userID = new ObjectId(req.body.userID);
+
+  let db_connect = dbo.getDb("movieknightdb");
+
+  var data = db_connect.collection("users").findOne({_id:req.body.userID});
+
+  if (data) { return res.status(200).send({message:"UserColor", data:data.username}); } 
+
+  // Error: Redirect User Back to Home
+  else { return res.status(500).send({message:"Internal Server Error, Try Again Later."}); }
+>>>>>>> Stashed changes
 });
 
 // CHANGECOLOR API ROUTE
 // changes the stored color field in the given user
+<<<<<<< Updated upstream
 recordRoutes.route("/usercolor/changecolor").put(async function(req, response) {
   let db_connect = dbo.getDb("movieknightdb");
 
@@ -388,6 +409,25 @@ recordRoutes.route("/usercolor/changecolor").put(async function(req, response) {
 
     db_connect.collection('users').updateOne(userquery, color = newColor, function(err, res) {});
     res.json({message:"Updated Color Scheme"});
+=======
+recordRoutes.route("/usercolor/changecolor").post(async function(req, res) 
+{
+  req.body.userID = new ObjectId(req.body.userID);
+  let db_connect = dbo.getDb("movieknightdb");
+
+  try
+  {
+    const newColor = parseInt(req.body.color);
+
+    //console.log(req.body.color);
+
+    var data = db_connect.collection('users').updateOne({_id:req.body.userID}, color = newColor, function(err, res) {});
+
+    if (data) { return res.status(200).send({message:"Updated Color Scheme", data:data.color}); } 
+
+    // Error: Redirect User Back to Home
+    else { return res.status(500).send({message:"Internal Server Error, Try Again Later."}); }
+>>>>>>> Stashed changes
   }
   // some kind of server error
   catch (error)

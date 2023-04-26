@@ -1,13 +1,15 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import logo from './Images/logo.png';
 import Button from 'react-bootstrap/Button';
 import 'bootstrap/dist/css/bootstrap.css';
+import './styles.css'
 
-function MainBar() 
+function MainBar({ backg }) 
 {
+  
   // This is the function that is ran when the page is loaded for the first time
   useEffect(() => 
   {
@@ -45,8 +47,8 @@ function MainBar()
   }
 
   
-  return (
-    <Navbar bg = 'light' expand = 'large'>
+    return (
+        <Navbar id={backg} expand='large' class="navbar">
       <Container>
         
         {/* Logo */}
